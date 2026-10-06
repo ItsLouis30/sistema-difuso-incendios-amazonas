@@ -132,7 +132,7 @@ No se requiere instalar dependencias para ejecutar la suite actual:
 python -m unittest discover -s tests -v
 ```
 
-Las 58 pruebas cubren funciones de pertenencia, universos, 192 reglas, centroide,
+Las 59 pruebas cubren funciones de pertenencia, universos, 192 reglas, centroide,
 corridas de referencia, explicabilidad, una malla de 648 escenarios, procesamiento
 meteorológico, auditoría del modelo, repositorio histórico, casos de uso y contratos
 HTTP de la API.

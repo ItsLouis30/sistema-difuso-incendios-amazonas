@@ -116,6 +116,63 @@ class ApiContractTests(unittest.TestCase):
         self.assertEqual(body["resultado"]["codigo_categoria"], "moderado")
         self.assertEqual(len(body["curva_salida"]), 2001)
 
+    def test_four_reference_levels_return_the_expected_api_result(self) -> None:
+        scenarios = (
+            (
+                {
+                    "hr_min_pct": 85,
+                    "dias_secos": 0,
+                    "viento_max_ms": 1.5,
+                    "humedad_suelo_superficial_m3m3": 0.354,
+                },
+                8.33,
+                "muy_bajo",
+                "Muy bajo",
+            ),
+            (
+                {
+                    "hr_min_pct": 85,
+                    "dias_secos": 8,
+                    "viento_max_ms": 1.5,
+                    "humedad_suelo_superficial_m3m3": 0.354,
+                },
+                50.0,
+                "moderado",
+                "Moderado",
+            ),
+            (
+                {
+                    "hr_min_pct": 30,
+                    "dias_secos": 0,
+                    "viento_max_ms": 4.5,
+                    "humedad_suelo_superficial_m3m3": 0.354,
+                },
+                75.0,
+                "alto",
+                "Alto",
+            ),
+            (
+                {
+                    "hr_min_pct": 30,
+                    "dias_secos": 8,
+                    "viento_max_ms": 4.5,
+                    "humedad_suelo_superficial_m3m3": 0.354,
+                },
+                91.67,
+                "muy_alto",
+                "Muy alto",
+            ),
+        )
+
+        for payload, expected_index, expected_code, expected_label in scenarios:
+            with self.subTest(expected_code=expected_code):
+                response = self.client.post("/api/v1/inferences", json=payload)
+                self.assertEqual(response.status_code, 200)
+                result = response.json()["resultado"]
+                self.assertEqual(result["indice"], expected_index)
+                self.assertEqual(result["codigo_categoria"], expected_code)
+                self.assertEqual(result["categoria"], expected_label)
+
     def test_invalid_requests_use_the_stable_error_envelope(self) -> None:
         invalid_payloads = (
             {
