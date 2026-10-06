@@ -1,0 +1,423 @@
+# Sistema de inferencia difusa Mamdani para la preparación preventiva ante incendios forestales
+
+Sistema web completo para calcular y explicar el **nivel de preparación preventiva ante condiciones meteorológicas favorables a incendios forestales en el entorno de Chachapoyas, Amazonas, Perú**.
+
+El sistema combina tres variables diarias mediante inferencia difusa Mamdani:
+
+- humedad relativa mínima;
+- días consecutivos con precipitación menor a 1 mm;
+- velocidad máxima diaria del viento a 10 m.
+
+El resultado es un índice continuo de `0–100`, una categoría lingüística y una explicación de las reglas activadas. El índice representa una **prioridad relativa de preparación**. No es una probabilidad de incendio, un pronóstico de ignición ni una orden institucional de movilización.
+
+> Proyecto del curso Sistemas Inteligentes, alineado con el **ODS 13: Acción por el clima**, especialmente las metas 13.1 y 13.3.
+
+## Estado del proyecto
+
+La planificación funcional y matemática de la versión 1 está cerrada. El repositorio se encuentra al inicio de la implementación.
+
+- [ ] Configuración versionada del modelo difuso
+- [ ] Motor Mamdani y explicación de reglas
+- [ ] Procesamiento y validación de la serie histórica
+- [ ] API REST del backend
+- [ ] Interfaz web manual e histórica
+- [ ] Gráficos de pertenencia, inferencia y sensibilidad
+- [ ] Pruebas unitarias, integración y corridas demostrativas
+- [ ] Documentación de ejecución y resultados
+
+La meta del repositorio es una **implementación completa**, separada en backend y frontend, con un núcleo matemático verificable y una interfaz utilizable.
+
+## Alcance funcional
+
+El sistema tendrá dos modos de uso:
+
+### Evaluación manual
+
+El usuario introduce:
+
+| Entrada | Unidad | Dominio v1 | Significado |
+|---|---:|---:|---|
+| HR mínima diaria | `%` | `0–100` | Menor HR implica mayor sequedad del aire |
+| Días secos consecutivos | días | `0–15` | Racha de días con precipitación válida `< 1 mm` |
+| Viento máximo diario | `m/s` | `0–6` | Máxima rapidez diaria a 10 m; no es ráfaga |
+
+La aplicación devuelve el índice, categoría, recomendación académica, grados de pertenencia y reglas activadas.
+
+### Consulta histórica
+
+El usuario selecciona una fecha entre `2000-01-01` y `2025-12-31`. El backend recupera las entradas de la serie preparada y ejecuta el mismo motor. La interfaz muestra también la precipitación diaria utilizada para calcular la racha seca y la procedencia de los datos.
+
+Las fechas fuera de junio–septiembre deben indicar que están fuera del periodo estacional empleado para calibrar las funciones y que su interpretación es exploratoria.
+
+## Fuente de datos
+
+La serie principal proviene de **ERA5**, consultado mediante la API histórica de Open-Meteo para las coordenadas de la estación Chachapoyas:
+
+```text
+Punto solicitado: -6.2083, -77.8671
+Celda ERA5 devuelta: -6.25, -77.75
+Zona horaria: America/Lima
+Periodo: 2000-01-01 a 2025-12-31
+Registros diarios: 9497
+```
+
+Variables del archivo preparado:
+
+```text
+fecha,pp_mm,hr_min_pct,viento_medio_ms,viento_max_ms,dias_secos
+```
+
+La entrada del motor es `viento_max_ms`; `viento_medio_ms` se conserva únicamente para análisis. Los datos son **estimaciones de reanálisis de una celda próxima a Chachapoyas**, no mediciones de la estación SENAMHI `000375` ni una representación de toda la región Amazonas.
+
+La estación `000375` se mantiene como referencia geográfica, pero no apareció en el módulo histórico de descarga consultado. No se deben sustituir sus datos con los de Magunchal.
+
+### Periodos de trabajo
+
+| Uso | Periodo |
+|---|---|
+| Serie completa | 2000–2025 |
+| Calibración de las funciones | Junio–septiembre de 2000–2019 |
+| Evaluación temporal reservada | Junio–septiembre de 2020–2025 |
+
+## Definición de días secos
+
+Sea `P_d` la precipitación diaria válida:
+
+```text
+si P_d >= 1 mm:
+    dias_secos = 0
+
+si 0 <= P_d < 1 mm y el contador anterior es conocido:
+    dias_secos = contador_anterior + 1
+
+si P_d falta o es sospechosa:
+    dias_secos = desconocido
+```
+
+Una precipitación de `0.2 mm` cuenta como día seco. Un dato faltante nunca se interpreta como cero. Después de un hueco, la racha permanece desconocida hasta encontrar un día húmedo válido o aplicar una reconstrucción expresamente documentada.
+
+## Modelo difuso
+
+El sistema es un Mamdani MISO de **tres entradas y una salida**:
+
+```text
+4 etiquetas de HR × 4 etiquetas de días × 4 etiquetas de viento
+                         =
+                    64 reglas
+```
+
+### Funciones de pertenencia de entrada
+
+Las funciones se expresan como trapezoides `(a,b,c,d)`. Cuando `b=c`, representan un triángulo. Los extremos usan funciones de hombro.
+
+| Variable | Etiqueta | Parámetros `(a,b,c,d)` |
+|---|---|---|
+| HR mínima (%) | Muy baja | `(0,0,46,53)` |
+| HR mínima (%) | Baja | `(46,53,53,66)` |
+| HR mínima (%) | Media | `(53,66,66,78)` |
+| HR mínima (%) | Alta | `(66,78,100,100)` |
+| Días secos | Cortos | `(0,0,1,2)` |
+| Días secos | Moderados | `(1,2,2,4)` |
+| Días secos | Prolongados | `(2,4,4,7)` |
+| Días secos | Extremos | `(4,7,15,15)` |
+| Viento máximo (m/s) | Muy bajo | `(0,0,1.95,2.45)` |
+| Viento máximo (m/s) | Bajo | `(1.95,2.45,2.45,2.95)` |
+| Viento máximo (m/s) | Medio | `(2.45,2.95,2.95,3.75)` |
+| Viento máximo (m/s) | Alto | `(2.95,3.75,6,6)` |
+
+Las etiquetas de viento son relativas a la distribución local modelada. Por ejemplo, “Alto” no equivale a vendaval ni a una categoría universal de la escala Beaufort.
+
+### Variable de salida
+
+El **nivel de preparación preventiva** usa el universo `[0,100]`:
+
+| Etiqueta | Parámetros `(a,b,c,d)` | Interpretación |
+|---|---|---|
+| Muy bajo | `(0,0,0,25)` | Vigilancia básica |
+| Bajo | `(0,25,25,50)` | Vigilancia reforzada |
+| Moderado | `(25,50,50,75)` | Preparación preventiva |
+| Alto | `(50,75,75,100)` | Coordinación y posible preposicionamiento |
+| Muy alto | `(75,100,100,100)` | Máxima preparación preventiva propuesta |
+
+La categoría mostrada para la salida crisp se determina por máxima pertenencia:
+
+```text
+[0,12.5)     → Muy bajo
+[12.5,37.5)  → Bajo
+[37.5,62.5)  → Moderado
+[62.5,87.5)  → Alto
+[87.5,100]   → Muy alto
+```
+
+En un empate exacto se elige la categoría superior. Debido a la defuzzificación por centroide, los extremos típicos son aproximadamente `8.33` y `91.67`, aunque el universo sea `0–100`.
+
+### Base de reglas
+
+Cada celda representa el consecuente: `0=Muy bajo`, `1=Bajo`, `2=Moderado`, `3=Alto`, `4=Muy alto`.
+
+- Filas: HR `[Muy baja, Baja, Media, Alta]`.
+- Columnas: días `[Cortos, Moderados, Prolongados, Extremos]`.
+- Matrices: viento `[Muy bajo, Bajo, Medio, Alto]`.
+
+```text
+Viento Muy bajo    Viento Bajo        Viento Medio       Viento Alto
+1 2 2 3            2 3 3 3            2 3 4 4            3 4 4 4
+0 1 2 2            1 2 2 3            2 3 3 4            2 3 4 4
+0 0 1 2            0 1 2 2            1 2 3 3            1 2 3 4
+0 0 1 2            0 0 1 2            0 1 2 3            0 1 2 3
+```
+
+Representación recomendada en el backend:
+
+```text
+reglas[indice_viento][indice_hr][indice_dias]
+numero_regla = 16*indice_viento + 4*indice_hr + indice_dias + 1
+```
+
+Las reglas deben generarse desde esta matriz para evitar errores de transcripción. La tabla es monótona en sus consecuentes discretos: el nivel no disminuye cuando baja la HR o aumentan los días secos o el viento.
+
+### Operadores Mamdani
+
+```text
+AND:               mínimo
+Implicación:       mínimo
+Agregación:        máximo
+Defuzzificación:   centroide
+```
+
+Para una regla `k`:
+
+```text
+alpha_k = min(mu_hr, mu_dias, mu_viento)
+mu_regla_k(y) = min(alpha_k, mu_consecuente_k(y))
+mu_agregada(y) = max(mu_regla_k(y))
+indice = integral(y * mu_agregada(y)) / integral(mu_agregada(y))
+```
+
+El backend debe rechazar una inferencia cuando falta una entrada o cuando un valor está fuera del dominio configurado. No debe recortar valores silenciosamente.
+
+## Arquitectura prevista
+
+```text
+┌──────────────────────── Frontend ────────────────────────┐
+│ Formularios manual e histórico                          │
+│ Resultado, categoría, explicación y visualizaciones     │
+└───────────────────────────┬──────────────────────────────┘
+                            │ HTTP / JSON
+┌───────────────────────────▼──────────────────────────────┐
+│ Backend API                                              │
+│ Validación → casos de uso → motor Mamdani → respuesta   │
+├──────────────────────────────────────────────────────────┤
+│ Configuración versionada │ Serie histórica │ Auditoría  │
+└──────────────────────────────────────────────────────────┘
+```
+
+### Stack recomendado
+
+| Capa | Tecnología |
+|---|---|
+| Backend | Python 3.12, FastAPI, Pydantic, NumPy y pandas |
+| Frontend | React, TypeScript y Vite |
+| Gráficos | Recharts o una librería equivalente mantenida |
+| Pruebas backend | pytest |
+| Pruebas frontend | Vitest y Testing Library |
+| Calidad | Ruff para Python; ESLint y Prettier para TypeScript |
+
+El motor difuso debe implementarse como un módulo independiente de FastAPI. La interfaz consume el contrato HTTP y no replica reglas ni funciones de pertenencia.
+
+### Estructura objetivo
+
+```text
+.
+├── backend/
+│   ├── app/
+│   │   ├── api/             # Rutas y esquemas HTTP
+│   │   ├── core/            # Configuración y errores
+│   │   ├── domain/          # Modelo difuso y entidades
+│   │   ├── services/        # Casos de uso
+│   │   └── data/            # Lectura y validación de la serie
+│   ├── tests/
+│   └── pyproject.toml
+├── frontend/
+│   ├── src/
+│   │   ├── api/             # Cliente HTTP tipado
+│   │   ├── components/
+│   │   ├── features/
+│   │   ├── pages/
+│   │   └── types/
+│   ├── tests/
+│   └── package.json
+├── data/                    # Serie procesada y metadatos
+├── docs/                    # Diseño, decisiones y resultados
+├── .env.example
+├── .gitignore
+└── README.md
+```
+
+La estructura muestra el objetivo de implementación. Las carpetas y archivos se crearán conforme avance el desarrollo.
+
+## Contrato inicial de la API
+
+Prefijo sugerido: `/api/v1`.
+
+| Método y ruta | Propósito |
+|---|---|
+| `GET /health` | Estado básico del backend |
+| `GET /api/v1/model` | Dominios, etiquetas, funciones, versión y fuente |
+| `POST /api/v1/inferences` | Inferencia con tres entradas manuales |
+| `GET /api/v1/inferences/history/{date}` | Inferencia para una fecha del CSV |
+| `GET /api/v1/history/range` | Rango temporal y cobertura disponible |
+| `GET /api/v1/history/{date}` | Variables meteorológicas de una fecha |
+
+Solicitud manual propuesta:
+
+```json
+{
+  "hr_min_pct": 59,
+  "dias_secos": 3,
+  "viento_max_ms": 2.7
+}
+```
+
+Respuesta propuesta:
+
+```json
+{
+  "model_version": "1.0.0",
+  "mode": "manual",
+  "inputs": {
+    "hr_min_pct": 59.0,
+    "dias_secos": 3,
+    "viento_max_ms": 2.7
+  },
+  "result": {
+    "index": 56.4,
+    "category": "Moderado",
+    "recommendation": "Preparación preventiva"
+  },
+  "memberships": {},
+  "active_rules": [],
+  "source": {
+    "type": "manual"
+  }
+}
+```
+
+Los valores del ejemplo describen la forma del contrato; el índice real debe calcularse con el motor implementado.
+
+Cada error debe utilizar un formato estable:
+
+```json
+{
+  "error": {
+    "code": "INPUT_OUT_OF_DOMAIN",
+    "message": "viento_max_ms debe estar entre 0 y 6 m/s",
+    "field": "viento_max_ms"
+  }
+}
+```
+
+## Requisitos de la interfaz
+
+La aplicación web debe incluir:
+
+1. vista de presentación y alcance del sistema;
+2. formulario de evaluación manual con unidades, dominios y ayuda contextual;
+3. selector de fecha para consulta histórica;
+4. resultado numérico y categoría con una escala visual accesible;
+5. variables utilizadas y procedencia de datos;
+6. reglas activadas, fuerza de disparo y explicación legible;
+7. gráficas de funciones de pertenencia y conjunto agregado;
+8. mensajes claros para datos ausentes, fechas inválidas y valores fuera de dominio;
+9. aviso visible de que el índice no predice ignición ni reemplaza decisiones institucionales.
+
+Los colores de las categorías no deben ser la única forma de comunicar el nivel. Cada resultado debe incluir texto y valor numérico.
+
+## Estrategia de pruebas
+
+### Backend
+
+- funciones triangulares, trapezoidales y hombros;
+- cobertura y partición de los universos;
+- 64 antecedentes únicos y generación correcta desde la FAM;
+- operadores mínimo, máximo y centroide;
+- validación de límites y datos faltantes;
+- cálculo de días secos para `P=0`, `0.2`, `0.999`, `1.0` y faltantes;
+- lectura de fechas históricas y procedencia;
+- contratos HTTP y códigos de error;
+- barridos de sensibilidad de las tres entradas.
+
+### Frontend
+
+- validación y unidades de los formularios;
+- estados de carga, error y éxito;
+- renderizado del resultado y las reglas;
+- consulta histórica por fecha;
+- accesibilidad básica por teclado y etiquetas;
+- correspondencia entre tipos del frontend y contrato del backend.
+
+### Diez corridas obligatorias
+
+| Caso | HR % | Días | Viento máx. m/s | Resultado esperado |
+|---|---:|---:|---:|---|
+| Favorable | 85 | 0 | 1.5 | Muy bajo, centroide ≈ 8.33 |
+| Aire húmedo con sequía | 85 | 8 | 1.5 | Moderado, centroide ≈ 50 |
+| Solo viento alto | 85 | 0 | 4.5 | Muy bajo, centroide ≈ 8.33 |
+| Aire muy seco con lluvia reciente | 30 | 0 | 1.5 | Bajo, centroide ≈ 25 |
+| Aire muy seco, lluvia reciente y viento alto | 30 | 0 | 4.5 | Alto, centroide ≈ 75 |
+| Aire muy seco, sequía y poco viento | 30 | 8 | 1.5 | Alto, centroide ≈ 75 |
+| Tres condiciones desfavorables | 30 | 8 | 4.5 | Muy alto, centroide ≈ 91.67 |
+| Combinación media | 66 | 4 | 2.95 | Alto, centroide ≈ 75 |
+| Combinación baja-media | 53 | 2 | 2.45 | Moderado, centroide ≈ 50 |
+| Transición | 59 | 3 | 2.70 | Activa varias reglas; resultado finito y explicable |
+
+Las corridas verifican que el software respete el diseño. No constituyen validación contra incendios observados.
+
+## Criterios de aceptación
+
+La primera versión se considera completa cuando:
+
+- backend y frontend se ejecutan con instrucciones reproducibles;
+- el modelo y la FAM se cargan desde una configuración única y versionada;
+- el modo manual y el histórico producen resultados explicables;
+- las 64 reglas tienen cobertura y no presentan inversiones discretas;
+- las diez corridas y la suite automatizada pasan;
+- los barridos de sensibilidad están disponibles y documentados;
+- la procedencia ERA5 y las limitaciones aparecen en la interfaz y documentación;
+- no se afirma que el sistema prediga incendios o utilice observaciones de SENAMHI.
+
+La revisión por expertos y el contraste con incendios reales quedan fuera del alcance del curso.
+
+## Desarrollo local
+
+Los comandos definitivos se añadirán cuando se creen los proyectos backend y frontend. El flujo previsto será:
+
+```text
+Terminal 1 → instalar dependencias del backend → iniciar API
+Terminal 2 → instalar dependencias del frontend → iniciar aplicación web
+Terminal 3 → ejecutar pruebas y verificaciones de calidad
+```
+
+No deben documentarse comandos como disponibles hasta que los archivos de configuración correspondientes existan y hayan sido probados.
+
+## Principios para contribuir
+
+- No duplicar parámetros o reglas entre frontend y backend.
+- No modificar nodos, dominios o la FAM sin actualizar la versión del modelo y sus pruebas.
+- Mantener datos originales, datos procesados y configuración separados.
+- No reemplazar faltantes por cero.
+- No redondear entradas antes de fuzzificarlas; redondear solo la presentación del resultado.
+- Añadir pruebas cuando se corrija un error del motor o del contrato.
+- Documentar toda transformación de unidades, fechas o fuente de datos.
+
+## Limitaciones conocidas
+
+- ERA5 representa una celda espacial y puede diferir del microclima local de Chachapoyas.
+- Los días secos simplifican el estado real de humedad del combustible.
+- El viento máximo diario puede no coincidir temporalmente con la HR mínima.
+- La base de reglas es una heurística académica del grupo.
+- El sistema no incluye vegetación, pendiente, actividad humana ni detección de focos.
+
+## Licencia y autores
+
+Proyecto académico del Grupo 8. La licencia y la lista completa de integrantes se definirán antes de publicar la primera versión estable.
