@@ -16,6 +16,17 @@ from app.api.schemas.inference import (
 from app.domain.model import InferenceResult, LinguisticVariable, PreparedWeatherRecord
 
 
+INDEX_DECIMALS = 2
+DEGREE_DECIMALS = 6
+CURVE_X_DECIMALS = 2
+
+
+def _display_float(value: float, decimals: int) -> float:
+    """Redondea solo el contrato HTTP y normaliza el cero negativo."""
+    rounded = round(float(value), decimals)
+    return 0.0 if rounded == 0.0 else rounded
+
+
 def serialize_weather(record: PreparedWeatherRecord) -> HistoricalRecordResponse:
     return HistoricalRecordResponse(
         fecha=record.date,
@@ -60,27 +71,36 @@ def serialize_inference(
             ],
         ),
         resultado=InferenceSummary(
-            indice=result.output_index,
+            indice=_display_float(result.output_index, INDEX_DECIMALS),
             categoria=result.output_label,
             codigo_categoria=result.output_category,
             recomendacion=result.recommendation,
         ),
         pertenencias_entrada={
-            variable: dict(memberships)
+            variable: {
+                term: _display_float(degree, DEGREE_DECIMALS)
+                for term, degree in memberships.items()
+            }
             for variable, memberships in result.input_memberships.items()
         },
-        pertenencias_salida=dict(result.output_memberships),
+        pertenencias_salida={
+            term: _display_float(degree, DEGREE_DECIMALS)
+            for term, degree in result.output_memberships.items()
+        },
         reglas_activas=[
             ActiveRuleResponse(
                 numero=rule.number,
                 antecedentes=dict(rule.antecedents),
                 consecuente=rule.consequent,
-                activacion=rule.activation,
+                activacion=_display_float(rule.activation, DEGREE_DECIMALS),
             )
             for rule in result.active_rules
         ],
         curva_salida=[
-            CurvePoint(x=x, pertenencia=membership)
+            CurvePoint(
+                x=_display_float(x, CURVE_X_DECIMALS),
+                pertenencia=_display_float(membership, DEGREE_DECIMALS),
+            )
             for x, membership in result.output_curve
         ],
         fuente=source,

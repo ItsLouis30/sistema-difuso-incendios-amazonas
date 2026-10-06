@@ -89,6 +89,33 @@ class ApiContractTests(unittest.TestCase):
             body["fuente"]["registro"]["hr_min_pct"],
         )
 
+    def test_response_rounds_floats_without_changing_the_model_result(self) -> None:
+        response = self.client.post(
+            "/api/v1/inferences",
+            json={
+                "hr_min_pct": 53,
+                "dias_secos": 2,
+                "viento_max_ms": 2.45,
+                "humedad_suelo_superficial_m3m3": 0.354,
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(body["resultado"]["indice"], 50.0)
+        self.assertEqual(
+            body["pertenencias_salida"],
+            {
+                "muy_bajo": 0.0,
+                "bajo": 0.0,
+                "moderado": 1.0,
+                "alto": 0.0,
+                "muy_alto": 0.0,
+            },
+        )
+        self.assertEqual(body["resultado"]["codigo_categoria"], "moderado")
+        self.assertEqual(len(body["curva_salida"]), 2001)
+
     def test_invalid_requests_use_the_stable_error_envelope(self) -> None:
         invalid_payloads = (
             {

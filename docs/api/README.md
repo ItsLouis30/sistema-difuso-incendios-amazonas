@@ -57,6 +57,10 @@ La respuesta contiene:
 - 2 001 puntos de la curva agregada para graficar el centroide;
 - procedencia manual o histórica.
 
+La precisión interna del motor no se modifica. Al construir el JSON, el índice se
+redondea a dos decimales y los grados de pertenencia, activaciones y curva a seis
+decimales. Así, residuos numéricos como `2.84e-16` se presentan como `0.0`.
+
 El campo `dias_secos` acepta enteros entre 0 y 15. Los demás dominios pueden
 consultarse dinámicamente en `GET /api/v1/model`.
 
