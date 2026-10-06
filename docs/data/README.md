@@ -53,8 +53,44 @@ Los archivos de `data/raw` son inmutables. La limpieza, el cálculo de rachas y
 la unión de fuentes deben escribir nuevos archivos dentro de `data/processed`.
 Un vacío nunca debe convertirse en precipitación cero.
 
+## Paso 2: cálculo de días secos
+
+El contador está implementado en `backend/app/domain/data_processing/dry_days.py`.
+La definición aplicada es:
+
+```text
+si pp_mm >= 1.0:
+    dias_secos = 0
+
+si 0 <= pp_mm < 1.0 y la racha anterior es conocida:
+    dias_secos = racha_anterior + 1
+
+si pp_mm falta, existe un salto de fecha o no se conoce el antecedente:
+    dias_secos = desconocido
+```
+
+Una racha desconocida vuelve a ser calculable después de observar un día húmedo
+válido. Un primer registro seco permanece desconocido porque el archivo no informa
+lo ocurrido antes de su fecha inicial.
+
+La generación reproducible se ejecuta desde la raíz:
+
+```powershell
+python scripts/data/build_dry_days.py
+```
+
+Produce:
+
+```text
+data/processed/era5_atmospheric_with_dry_days.csv
+data/metadata/dry_days_v1.json
+```
+
+En la serie completa se obtuvieron 9,497 valores conocidos, cero desconocidos y
+una racha máxima de 14 días. Por tanto, el universo difuso `0–15` cubre la serie
+histórica sin truncamiento.
+
 ## Próximo paso
 
-Implementar el cálculo de `dias_secos` con el umbral `1 mm`, incluyendo el
-comportamiento ante el primer registro, un dato faltante y la reanudación del
-contador después de un hueco.
+Leer y validar la serie ERA5-Land, unirla por fecha con este archivo intermedio y
+generar el dataset definitivo de cuatro entradas.

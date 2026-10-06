@@ -45,6 +45,8 @@ reemplaza silenciosamente datos inválidos.
 - `infrastructure/configuration`: construcción del modelo desde JSON versionado.
 - `infrastructure/data/loaders`: lectura segura del CSV ERA5, metadatos y reporte
   de cobertura, faltantes, duplicados y rangos físicos.
+- `domain/data_processing`: cálculo determinista de rachas secas con propagación
+  explícita del estado desconocido.
 
 ## Configuración versionada
 

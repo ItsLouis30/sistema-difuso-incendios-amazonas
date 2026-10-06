@@ -26,6 +26,13 @@ class AtmosphericRecord:
 
 
 @dataclass(frozen=True, slots=True)
+class DryDayObservation:
+    date: date
+    precipitation_mm: float | None
+    dry_days: int | None
+
+
+@dataclass(frozen=True, slots=True)
 class DataQualityReport:
     record_count: int
     first_date: date

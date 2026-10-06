@@ -1,0 +1,22 @@
+{
+  "source_file": "data/raw/era5_atmospheric_chachapoyas_2000_2025.csv",
+  "source_sha256": "4de8abe9b1bd0e24144fd34003b486c16e4858c7292279e4664cc6cec3c1c8a1",
+  "output_file": "data/processed/era5_atmospheric_with_dry_days.csv",
+  "output_sha256": "173f769fa2910eaf9f9653cd9ecb651db9e8cad1b84f738748326043c8d9b73c",
+  "algorithm": {
+    "precipitation_threshold_mm": 1.0,
+    "wet_day": "pp_mm >= 1.0 reinicia dias_secos a 0",
+    "dry_day": "0 <= pp_mm < 1.0 incrementa una racha conocida",
+    "missing_value": "produce desconocido hasta observar un dia humedo valido",
+    "calendar_gap": "produce desconocido hasta observar un dia humedo valido",
+    "first_dry_day": "desconocido porque no existe antecedente previo"
+  },
+  "quality": {
+    "records": 9497,
+    "unknown_dry_days": 0,
+    "maximum_dry_days": 14,
+    "maximum_dates": [
+      "2000-11-15"
+    ]
+  }
+}
