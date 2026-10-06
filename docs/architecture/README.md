@@ -21,7 +21,7 @@ Entradas crisp
 |---|---|---|
 | Funciones de membresía | `backend/app/domain/fuzzy/membership_functions/` | Triángulos, trapecios, universos y evaluación de `mu(x)` |
 | Borrosificador | `backend/app/domain/fuzzy/fuzzifier/` | Convertir cada entrada crisp en grados de pertenencia |
-| Base de reglas | `backend/app/domain/fuzzy/rule_base/` | Cargar y validar los 64 antecedentes y consecuentes lingüísticos |
+| Base de reglas | `backend/app/domain/fuzzy/rule_base/` | Cargar y validar los 192 antecedentes y consecuentes lingüísticos |
 | Motor de inferencia | `backend/app/domain/fuzzy/inference_engine/` | Evaluar antecedentes, implicar y agregar conjuntos de salida |
 | Desborrosificador | `backend/app/domain/fuzzy/defuzzifier/` | Calcular el centroide del conjunto agregado |
 | Explicabilidad | `backend/app/domain/fuzzy/explanation/` | Exponer membresías, fuerzas y reglas activadas |
@@ -42,12 +42,12 @@ Los consecuentes son conjuntos difusos lingüísticos: Muy bajo, Bajo, Moderado,
 
 ## Configuración versionada
 
-`config/fuzzy_model/v1/` almacenará, cuando se implemente:
+`config/fuzzy_model/v1/` almacena:
 
 ```text
 model.json                 # versión, universos y operadores
 membership_functions.json # etiquetas y nodos
-rule_base.json             # matriz FAM 4×4×4
+rule_base.json             # matriz FAM 3×4×4×4
 output_actions.json        # categoría y texto orientativo
 ```
 

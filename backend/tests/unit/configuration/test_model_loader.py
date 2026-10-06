@@ -12,8 +12,12 @@ class ModelLoaderTests(unittest.TestCase):
         self.assertEqual(system.metadata.aggregation_operator, "maximum")
         self.assertEqual(system.metadata.defuzzification_method, "centroid")
         self.assertEqual(set(system.input_variables), {
-            "hr_min_pct", "dias_secos", "viento_max_ms"
+            "hr_min_pct",
+            "dias_secos",
+            "viento_max_ms",
+            "humedad_suelo_superficial_m3m3",
         })
+        self.assertEqual(system.metadata.version, "1.1.0")
 
 
 if __name__ == "__main__":

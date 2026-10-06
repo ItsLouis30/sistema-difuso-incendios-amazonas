@@ -32,6 +32,16 @@
         {"name": "medio", "points": [2.45, 2.95, 2.95, 3.75]},
         {"name": "alto", "points": [2.95, 3.75, 6.0, 6.0]}
       ]
+    },
+    "humedad_suelo_superficial_m3m3": {
+      "display_name": "Humedad volumetrica media diaria del suelo superficial (0-7 cm)",
+      "unit": "m3/m3",
+      "universe": [0.0, 1.0],
+      "terms": [
+        {"name": "seca", "points": [0.0, 0.0, 0.313, 0.354]},
+        {"name": "intermedia", "points": [0.313, 0.354, 0.354, 0.385]},
+        {"name": "humeda", "points": [0.354, 0.385, 1.0, 1.0]}
+      ]
     }
   },
   "output": {
@@ -48,4 +58,3 @@
     ]
   }
 }
-

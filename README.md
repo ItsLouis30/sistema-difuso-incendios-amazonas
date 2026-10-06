@@ -2,11 +2,12 @@
 
 Sistema web completo para calcular y explicar el **nivel de preparación preventiva ante condiciones meteorológicas favorables a incendios forestales en el entorno de Chachapoyas, Amazonas, Perú**.
 
-El sistema combina tres variables diarias mediante inferencia difusa Mamdani:
+El sistema combina cuatro variables diarias mediante inferencia difusa Mamdani:
 
 - humedad relativa mínima;
 - días consecutivos con precipitación menor a 1 mm;
 - velocidad máxima diaria del viento a 10 m.
+- humedad volumétrica media del suelo superficial entre 0 y 7 cm.
 
 El resultado es un índice continuo de `0–100`, una categoría lingüística y una explicación de las reglas activadas. El índice representa una **prioridad relativa de preparación**. No es una probabilidad de incendio, un pronóstico de ignición ni una orden institucional de movilización.
 
@@ -43,6 +44,7 @@ El usuario introduce:
 | HR mínima diaria | `%` | `0–100` | Menor HR implica mayor sequedad del aire |
 | Días secos consecutivos | días | `0–15` | Racha de días con precipitación válida `< 1 mm` |
 | Viento máximo diario | `m/s` | `0–6` | Máxima rapidez diaria a 10 m; no es ráfaga |
+| Humedad del suelo superficial | `m³/m³` | `0–1` | Reserva hídrica modelada en la capa de 0–7 cm |
 
 La aplicación devuelve el índice, categoría, recomendación académica, grados de pertenencia y reglas activadas.
 
@@ -54,23 +56,32 @@ Las fechas fuera de junio–septiembre deben indicar que están fuera del period
 
 ## Fuente de datos
 
-La serie principal proviene de **ERA5**, consultado mediante la API histórica de Open-Meteo para las coordenadas de la estación Chachapoyas:
+Las variables atmosféricas provienen de **ERA5** y la humedad superficial del
+suelo de **ERA5-Land**, consultadas mediante la API histórica de Open-Meteo para
+las coordenadas de la estación Chachapoyas:
 
 ```text
 Punto solicitado: -6.2083, -77.8671
 Celda ERA5 devuelta: -6.25, -77.75
+Celda ERA5-Land devuelta: -6.20, -77.90
+Elevación ERA5-Land: 2441 m
 Zona horaria: America/Lima
 Periodo: 2000-01-01 a 2025-12-31
 Registros diarios: 9497
+Faltantes de humedad del suelo: 0
 ```
 
 Variables del archivo preparado:
 
 ```text
-fecha,pp_mm,hr_min_pct,viento_medio_ms,viento_max_ms,dias_secos
+fecha,pp_mm,hr_min_pct,viento_medio_ms,viento_max_ms,dias_secos,humedad_suelo_superficial_m3m3
 ```
 
-La entrada del motor es `viento_max_ms`; `viento_medio_ms` se conserva únicamente para análisis. Los datos son **estimaciones de reanálisis de una celda próxima a Chachapoyas**, no mediciones de la estación SENAMHI `000375` ni una representación de toda la región Amazonas.
+Las entradas del viento y del suelo son `viento_max_ms` y
+`humedad_suelo_superficial_m3m3`; `viento_medio_ms` se conserva únicamente para
+análisis. Los datos son **estimaciones de reanálisis de celdas próximas a
+Chachapoyas**, no mediciones de la estación SENAMHI `000375` ni una representación
+de toda la región Amazonas.
 
 La estación `000375` se mantiene como referencia geográfica, pero no apareció en el módulo histórico de descarga consultado. No se deben sustituir sus datos con los de Magunchal.
 
@@ -101,12 +112,12 @@ Una precipitación de `0.2 mm` cuenta como día seco. Un dato faltante nunca se 
 
 ## Modelo difuso
 
-El sistema es un Mamdani MISO de **tres entradas y una salida**:
+El sistema es un Mamdani MISO de **cuatro entradas y una salida**:
 
 ```text
-4 etiquetas de HR × 4 etiquetas de días × 4 etiquetas de viento
-                         =
-                    64 reglas
+4 etiquetas de HR × 4 etiquetas de días × 4 etiquetas de viento × 3 de suelo
+                                  =
+                             192 reglas
 ```
 
 ### Funciones de pertenencia de entrada
@@ -127,8 +138,16 @@ Las funciones se expresan como trapezoides `(a,b,c,d)`. Cuando `b=c`, representa
 | Viento máximo (m/s) | Bajo | `(1.95,2.45,2.45,2.95)` |
 | Viento máximo (m/s) | Medio | `(2.45,2.95,2.95,3.75)` |
 | Viento máximo (m/s) | Alto | `(2.95,3.75,6,6)` |
+| Humedad del suelo (m³/m³) | Seca | `(0,0,0.313,0.354)` |
+| Humedad del suelo (m³/m³) | Intermedia | `(0.313,0.354,0.354,0.385)` |
+| Humedad del suelo (m³/m³) | Húmeda | `(0.354,0.385,1,1)` |
 
 Las etiquetas de viento son relativas a la distribución local modelada. Por ejemplo, “Alto” no equivale a vendaval ni a una categoría universal de la escala Beaufort.
+
+Los nodos de humedad del suelo corresponden a P25, P50 y P75 de los 2,440 días
+de junio–septiembre de 2000–2019. La serie ERA5-Land contiene 9,497 registros
+entre 2000 y 2025, sin faltantes. Esta variable representa humedad modelada del
+suelo y no una medición directa de humedad del combustible vegetal.
 
 ### Variable de salida
 
@@ -170,14 +189,21 @@ Viento Muy bajo    Viento Bajo        Viento Medio       Viento Alto
 0 0 1 2            0 0 1 2            0 1 2 3            0 1 2 3
 ```
 
-Representación recomendada en el backend:
+La matriz mostrada corresponde a humedad del suelo intermedia. La cuarta
+dimensión se obtiene de forma reproducible: suelo seco suma un nivel, suelo
+intermedio conserva el nivel y suelo húmedo resta un nivel, siempre limitado a
+`[0,4]`.
+
+Representación en el backend:
 
 ```text
-reglas[indice_viento][indice_hr][indice_dias]
-numero_regla = 16*indice_viento + 4*indice_hr + indice_dias + 1
+reglas[indice_suelo][indice_viento][indice_hr][indice_dias]
+numero_regla = 64*indice_suelo + 16*indice_viento + 4*indice_hr + indice_dias + 1
 ```
 
-Las reglas deben generarse desde esta matriz para evitar errores de transcripción. La tabla es monótona en sus consecuentes discretos: el nivel no disminuye cuando baja la HR o aumentan los días secos o el viento.
+Así se obtienen 192 reglas sin transcribirlas manualmente. La FAM es monótona:
+el nivel no disminuye cuando baja la HR, aumentan los días secos o el viento, ni
+cuando disminuye la humedad del suelo.
 
 ### Operadores Mamdani
 
@@ -191,7 +217,7 @@ Defuzzificación:   centroide
 Para una regla `k`:
 
 ```text
-alpha_k = min(mu_hr, mu_dias, mu_viento)
+alpha_k = min(mu_hr, mu_dias, mu_viento, mu_suelo)
 mu_regla_k(y) = min(alpha_k, mu_consecuente_k(y))
 mu_agregada(y) = max(mu_regla_k(y))
 indice = integral(y * mu_agregada(y)) / integral(mu_agregada(y))
@@ -299,14 +325,16 @@ El motor difuso debe implementarse como un módulo independiente de FastAPI. La 
 └── README.md
 ```
 
-La estructura de carpetas ya está creada con archivos `.gitkeep`; todavía no contiene implementación. La correspondencia detallada entre los cuatro bloques y sus dependencias está en [`docs/architecture/README.md`](docs/architecture/README.md).
+La estructura contiene el núcleo Mamdani implementado y probado. La
+correspondencia detallada entre los cuatro bloques y sus dependencias está en
+[`docs/architecture/README.md`](docs/architecture/README.md).
 
 ### Correspondencia con el material de la profesora
 
 | Arquitectura difusa | Carpeta principal | Operación fijada |
 |---|---|---|
 | Borrosificador | `domain/fuzzy/fuzzifier/` | Evaluación de funciones de membresía; entradas crisp como singleton |
-| Base de Reglas Difusas | `domain/fuzzy/rule_base/` | 64 reglas con consecuentes lingüísticos difusos |
+| Base de Reglas Difusas | `domain/fuzzy/rule_base/` | 192 reglas con consecuentes lingüísticos difusos |
 | Motor de inferencia | `domain/fuzzy/inference_engine/` | Antecedente mínimo, implicación mínima y agregación máxima |
 | Desborrosificador | `domain/fuzzy/defuzzifier/` | Centro de gravedad o centroide |
 
@@ -320,7 +348,7 @@ Prefijo sugerido: `/api/v1`.
 |---|---|
 | `GET /health` | Estado básico del backend |
 | `GET /api/v1/model` | Dominios, etiquetas, funciones, versión y fuente |
-| `POST /api/v1/inferences` | Inferencia con tres entradas manuales |
+| `POST /api/v1/inferences` | Inferencia con cuatro entradas manuales |
 | `GET /api/v1/inferences/history/{date}` | Inferencia para una fecha del CSV |
 | `GET /api/v1/history/range` | Rango temporal y cobertura disponible |
 | `GET /api/v1/history/{date}` | Variables meteorológicas de una fecha |
@@ -331,7 +359,8 @@ Solicitud manual propuesta:
 {
   "hr_min_pct": 59,
   "dias_secos": 3,
-  "viento_max_ms": 2.7
+  "viento_max_ms": 2.7,
+  "humedad_suelo_superficial_m3m3": 0.354
 }
 ```
 
@@ -339,12 +368,13 @@ Respuesta propuesta:
 
 ```json
 {
-  "model_version": "1.0.0",
+  "model_version": "1.1.0",
   "mode": "manual",
   "inputs": {
     "hr_min_pct": 59.0,
     "dias_secos": 3,
-    "viento_max_ms": 2.7
+    "viento_max_ms": 2.7,
+    "humedad_suelo_superficial_m3m3": 0.354
   },
   "result": {
     "index": 56.4,
@@ -395,13 +425,13 @@ Los colores de las categorías no deben ser la única forma de comunicar el nive
 
 - funciones triangulares, trapezoidales y hombros;
 - cobertura y partición de los universos;
-- 64 antecedentes únicos y generación correcta desde la FAM;
+- 192 antecedentes únicos y generación correcta desde la FAM;
 - operadores mínimo, máximo y centroide;
 - validación de límites y datos faltantes;
 - cálculo de días secos para `P=0`, `0.2`, `0.999`, `1.0` y faltantes;
 - lectura de fechas históricas y procedencia;
 - contratos HTTP y códigos de error;
-- barridos de sensibilidad de las tres entradas.
+- barridos de sensibilidad de las cuatro entradas.
 
 ### Frontend
 
@@ -414,18 +444,18 @@ Los colores de las categorías no deben ser la única forma de comunicar el nive
 
 ### Diez corridas obligatorias
 
-| Caso | HR % | Días | Viento máx. m/s | Resultado esperado |
-|---|---:|---:|---:|---|
-| Favorable | 85 | 0 | 1.5 | Muy bajo, centroide ≈ 8.33 |
-| Aire húmedo con sequía | 85 | 8 | 1.5 | Moderado, centroide ≈ 50 |
-| Solo viento alto | 85 | 0 | 4.5 | Muy bajo, centroide ≈ 8.33 |
-| Aire muy seco con lluvia reciente | 30 | 0 | 1.5 | Bajo, centroide ≈ 25 |
-| Aire muy seco, lluvia reciente y viento alto | 30 | 0 | 4.5 | Alto, centroide ≈ 75 |
-| Aire muy seco, sequía y poco viento | 30 | 8 | 1.5 | Alto, centroide ≈ 75 |
-| Tres condiciones desfavorables | 30 | 8 | 4.5 | Muy alto, centroide ≈ 91.67 |
-| Combinación media | 66 | 4 | 2.95 | Alto, centroide ≈ 75 |
-| Combinación baja-media | 53 | 2 | 2.45 | Moderado, centroide ≈ 50 |
-| Transición | 59 | 3 | 2.70 | Activa varias reglas; resultado finito y explicable |
+| Caso | HR % | Días | Viento m/s | Suelo m³/m³ | Resultado esperado |
+|---|---:|---:|---:|---:|---|
+| Favorable | 85 | 0 | 1.5 | 0.354 | Muy bajo, centroide ≈ 8.33 |
+| Aire húmedo con sequía | 85 | 8 | 1.5 | 0.354 | Moderado, centroide ≈ 50 |
+| Solo viento alto | 85 | 0 | 4.5 | 0.354 | Muy bajo, centroide ≈ 8.33 |
+| Aire muy seco con lluvia reciente | 30 | 0 | 1.5 | 0.354 | Bajo, centroide ≈ 25 |
+| Aire seco, lluvia reciente y viento alto | 30 | 0 | 4.5 | 0.354 | Alto, centroide ≈ 75 |
+| Aire seco, sequía y poco viento | 30 | 8 | 1.5 | 0.354 | Alto, centroide ≈ 75 |
+| Condiciones desfavorables | 30 | 8 | 4.5 | 0.354 | Muy alto, centroide ≈ 91.67 |
+| Combinación media | 66 | 4 | 2.95 | 0.354 | Alto, centroide ≈ 75 |
+| Combinación baja-media | 53 | 2 | 2.45 | 0.354 | Moderado, centroide ≈ 50 |
+| Transición | 59 | 3 | 2.70 | 0.354 | Activa varias reglas; resultado explicable |
 
 Las corridas verifican que el software respete el diseño. No constituyen validación contra incendios observados.
 
@@ -436,10 +466,10 @@ La primera versión se considera completa cuando:
 - backend y frontend se ejecutan con instrucciones reproducibles;
 - el modelo y la FAM se cargan desde una configuración única y versionada;
 - el modo manual y el histórico producen resultados explicables;
-- las 64 reglas tienen cobertura y no presentan inversiones discretas;
+- las 192 reglas tienen cobertura y no presentan inversiones discretas;
 - las diez corridas y la suite automatizada pasan;
 - los barridos de sensibilidad están disponibles y documentados;
-- la procedencia ERA5 y las limitaciones aparecen en la interfaz y documentación;
+- la procedencia ERA5/ERA5-Land y las limitaciones aparecen en la interfaz y documentación;
 - no se afirma que el sistema prediga incendios o utilice observaciones de SENAMHI.
 
 La revisión por expertos y el contraste con incendios reales quedan fuera del alcance del curso.
@@ -468,8 +498,9 @@ No deben documentarse comandos como disponibles hasta que los archivos de config
 
 ## Limitaciones conocidas
 
-- ERA5 representa una celda espacial y puede diferir del microclima local de Chachapoyas.
-- Los días secos simplifican el estado real de humedad del combustible.
+- ERA5 y ERA5-Land representan celdas espaciales y pueden diferir del microclima local de Chachapoyas.
+- Los días secos y la humedad del suelo aproximan el estado hídrico, pero no
+  equivalen a humedad medida del combustible vegetal.
 - El viento máximo diario puede no coincidir temporalmente con la HR mínima.
 - La base de reglas es una heurística académica del grupo.
 - El sistema no incluye vegetación, pendiente, actividad humana ni detección de focos.

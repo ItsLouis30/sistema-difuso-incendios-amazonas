@@ -106,8 +106,10 @@ def load_mamdani_system(config_directory: str | Path) -> MamdaniSystem:
     rule_base = RuleBase(
         input_variables=input_variables,
         output_variable=output_variable,
+        antecedent_order=rules_data.get("antecedent_order", []),
         term_order=rules_data.get("term_order", {}),
         fam=rules_data.get("fam", []),
+        monotonicity=rules_data.get("monotonicity", {}),
     )
     fuzzifier = SingletonFuzzifier(input_variables)
     engine = MamdaniInferenceEngine(

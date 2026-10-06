@@ -1,0 +1,38 @@
+{
+  "variable": "humedad_suelo_superficial_m3m3",
+  "source_variable": "soil_moisture_0_to_7cm_mean",
+  "source_dataset": "ERA5-Land",
+  "source_service": "Open-Meteo Historical Weather API",
+  "source_url": "https://archive-api.open-meteo.com/v1/archive",
+  "retrieved_on": "2026-10-06",
+  "raw_file_sha256": "12b56f5ef07b3b4926b07001276c6082a724f37bb3eecaee4acb7c793980e704",
+  "requested_coordinates": [-6.2083, -77.8671],
+  "returned_coordinates": [-6.199997, -77.9],
+  "returned_elevation_m": 2441.0,
+  "timezone": "America/Lima",
+  "unit": "m3/m3",
+  "aggregation": "daily mean",
+  "complete_period": ["2000-01-01", "2025-12-31"],
+  "total_records": 9497,
+  "missing_records": 0,
+  "calibration_period": {
+    "years": [2000, 2019],
+    "months": [6, 7, 8, 9],
+    "records": 2440
+  },
+  "calibration_statistics": {
+    "minimum": 0.161,
+    "p05": 0.244,
+    "p25": 0.313,
+    "p50": 0.354,
+    "p75": 0.385,
+    "p95": 0.413,
+    "maximum": 0.438
+  },
+  "membership_nodes": {
+    "seca": [0.0, 0.0, 0.313, 0.354],
+    "intermedia": [0.313, 0.354, 0.354, 0.385],
+    "humeda": [0.354, 0.385, 1.0, 1.0]
+  },
+  "calibration_method": "P25, P50 y P75 del periodo estacional de calibracion"
+}
