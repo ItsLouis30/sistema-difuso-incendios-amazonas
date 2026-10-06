@@ -231,30 +231,83 @@ El motor difuso debe implementarse como un módulo independiente de FastAPI. La 
 .
 ├── backend/
 │   ├── app/
-│   │   ├── api/             # Rutas y esquemas HTTP
-│   │   ├── core/            # Configuración y errores
-│   │   ├── domain/          # Modelo difuso y entidades
-│   │   ├── services/        # Casos de uso
-│   │   └── data/            # Lectura y validación de la serie
-│   ├── tests/
-│   └── pyproject.toml
+│   │   ├── api/
+│   │   │   ├── routes/                  # Endpoints HTTP
+│   │   │   └── schemas/                 # Solicitudes y respuestas
+│   │   ├── application/
+│   │   │   ├── use_cases/               # Inferencia manual e histórica
+│   │   │   └── ports/                   # Contratos hacia infraestructura
+│   │   ├── domain/
+│   │   │   ├── fuzzy/
+│   │   │   │   ├── membership_functions/ # Triángulos y trapecios
+│   │   │   │   ├── fuzzifier/            # Bloque 1: borrosificación
+│   │   │   │   ├── rule_base/            # Bloque 2: BRD Mamdani
+│   │   │   │   ├── inference_engine/     # Bloque 3: inferencia
+│   │   │   │   ├── defuzzifier/          # Bloque 4: centroide
+│   │   │   │   └── explanation/          # Trazabilidad del resultado
+│   │   │   └── model/                    # Entidades y tipos del dominio
+│   │   └── infrastructure/
+│   │       ├── configuration/            # Carga del modelo versionado
+│   │       └── data/
+│   │           ├── loaders/              # Lectura y control de calidad
+│   │           └── repositories/         # Consulta de la serie histórica
+│   └── tests/
+│       ├── unit/                         # Pruebas por bloque Mamdani
+│       ├── integration/api/              # API + casos de uso
+│       └── fixtures/                     # Escenarios controlados
 ├── frontend/
+│   ├── public/
 │   ├── src/
-│   │   ├── api/             # Cliente HTTP tipado
-│   │   ├── components/
+│   │   ├── app/                          # Inicio, rutas y proveedores
+│   │   ├── pages/                        # Vistas completas
 │   │   ├── features/
-│   │   ├── pages/
-│   │   └── types/
-│   ├── tests/
-│   └── package.json
-├── data/                    # Serie procesada y metadatos
-├── docs/                    # Diseño, decisiones y resultados
-├── .env.example
-├── .gitignore
+│   │   │   ├── manual_inference/
+│   │   │   ├── historical_inference/
+│   │   │   ├── model_explanation/
+│   │   │   └── sensitivity_analysis/
+│   │   ├── components/
+│   │   │   ├── common/
+│   │   │   └── charts/
+│   │   ├── services/api/                 # Cliente del backend
+│   │   ├── types/                        # Contratos TypeScript
+│   │   ├── styles/
+│   │   └── assets/
+│   └── tests/
+│       ├── unit/
+│       ├── integration/
+│       └── e2e/
+├── config/fuzzy_model/v1/                # Parámetros y FAM versionados
+├── data/
+│   ├── raw/                              # Respuestas originales inmutables
+│   ├── processed/                        # CSV validado para el sistema
+│   ├── metadata/                         # Fuente y diccionario de datos
+│   └── samples/                          # Muestras ligeras
+├── docs/
+│   ├── architecture/                     # Diseño y dependencias
+│   ├── planning/                         # Alcance y decisiones
+│   ├── model/                            # Matemática, BRD y corridas
+│   ├── data/                             # Preparación y calidad
+│   ├── api/                              # Contrato HTTP
+│   └── testing/                          # Plan y resultados
+├── scripts/
+│   ├── data/                             # Preparación reproducible
+│   └── quality/                          # Verificaciones automatizadas
+├── deployment/docker/                    # Empaquetado posterior
 └── README.md
 ```
 
-La estructura muestra el objetivo de implementación. Las carpetas y archivos se crearán conforme avance el desarrollo.
+La estructura de carpetas ya está creada con archivos `.gitkeep`; todavía no contiene implementación. La correspondencia detallada entre los cuatro bloques y sus dependencias está en [`docs/architecture/README.md`](docs/architecture/README.md).
+
+### Correspondencia con el material de la profesora
+
+| Arquitectura difusa | Carpeta principal | Operación fijada |
+|---|---|---|
+| Borrosificador | `domain/fuzzy/fuzzifier/` | Evaluación de funciones de membresía; entradas crisp como singleton |
+| Base de Reglas Difusas | `domain/fuzzy/rule_base/` | 64 reglas con consecuentes lingüísticos difusos |
+| Motor de inferencia | `domain/fuzzy/inference_engine/` | Antecedente mínimo, implicación mínima y agregación máxima |
+| Desborrosificador | `domain/fuzzy/defuzzifier/` | Centro de gravedad o centroide |
+
+Esta separación confirma que el proyecto implementará un sistema **Mamdani**: los consecuentes son conjuntos difusos y existe una etapa explícita de agregación y defusificación. No se utilizarán consecuentes constantes o ecuaciones lineales de tipo Sugeno.
 
 ## Contrato inicial de la API
 
