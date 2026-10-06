@@ -25,6 +25,10 @@ Entradas crisp
 | Motor de inferencia | `backend/app/domain/fuzzy/inference_engine/` | Evaluar antecedentes, implicar y agregar conjuntos de salida |
 | Desborrosificador | `backend/app/domain/fuzzy/defuzzifier/` | Calcular el centroide del conjunto agregado |
 | Explicabilidad | `backend/app/domain/fuzzy/explanation/` | Exponer membresías, fuerzas y reglas activadas |
+| Casos de uso | `backend/app/application/use_cases/` | Coordinar inferencias manuales e históricas |
+| Puerto histórico | `backend/app/application/ports/` | Definir el acceso a datos sin depender de CSV |
+| Repositorio CSV | `backend/app/infrastructure/data/repositories/` | Validar e indexar el dataset diario definitivo |
+| Composición | `backend/app/infrastructure/configuration/application_factory.py` | Construir y compartir el modelo y sus dependencias |
 
 ## Regla de dependencias
 
@@ -35,6 +39,27 @@ frontend → API HTTP
 ```
 
 El dominio difuso no debe importar FastAPI, pandas, componentes de interfaz ni detalles de archivos. La API valida y transporta datos; los casos de uso coordinan; la infraestructura carga configuración y series; el dominio ejecuta Mamdani.
+
+## Flujos de aplicación implementados
+
+```text
+Manual
+HTTP futuro → RunManualInference → MamdaniSystem → InferenceResult
+
+Histórico
+HTTP futuro → RunHistoricalInference → WeatherHistoryRepository
+                                    → MamdaniSystem
+                                    → HistoricalInferenceResult
+```
+
+Ambos flujos comparten la misma instancia de `MamdaniSystem`. De este modo, la API
+no reproduce nombres de variables, reglas ni operadores. El repositorio implementa
+el puerto de la aplicación y puede cambiarse en el futuro sin afectar el dominio.
+
+La consulta histórica conserva el registro meteorológico junto al resultado para
+mostrar procedencia y valores usados. Las fechas de octubre a mayo se aceptan,
+pero quedan marcadas como interpretación exploratoria porque las funciones se
+calibraron con datos de junio a septiembre.
 
 ## Mamdani, no Sugeno
 

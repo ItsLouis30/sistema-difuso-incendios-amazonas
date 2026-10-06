@@ -16,8 +16,8 @@ El resultado es un índice continuo de `0–100`, una categoría lingüística y
 ## Estado del proyecto
 
 La planificación funcional y matemática de la versión 1 está cerrada. El núcleo
-Mamdani del backend ya está implementado y verificado; la siguiente etapa es el
-procesamiento de datos y su integración mediante casos de uso y API.
+Mamdani, la serie histórica definitiva y los casos de uso del backend ya están
+implementados y verificados. La siguiente etapa es exponerlos mediante la API.
 
 - [x] Configuración versionada del modelo difuso
 - [x] Motor Mamdani y explicación de reglas
@@ -28,6 +28,7 @@ procesamiento de datos y su integración mediante casos de uso y API.
   - [x] Cálculo reproducible de `dias_secos`
   - [x] Unión diaria y generación del dataset procesado
 - [x] Auditoría matemática y semántica de funciones y 192 reglas
+- [x] Repositorio histórico y casos de uso manual e histórico
 - [ ] API REST del backend
 - [ ] Interfaz web manual e histórica
 - [ ] Gráficos de pertenencia, inferencia y sensibilidad

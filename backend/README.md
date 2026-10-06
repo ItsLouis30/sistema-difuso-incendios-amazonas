@@ -1,8 +1,8 @@
 # Backend: núcleo Mamdani
 
-Esta primera etapa implementa el dominio matemático del sistema difuso. Todavía no
-incluye HTTP, persistencia ni el procesamiento completo de ERA5/ERA5-Land; esos adaptadores se conectarán
-después sin modificar las reglas del modelo.
+El backend implementa el dominio matemático, el procesamiento de ERA5/ERA5-Land,
+el acceso de solo lectura al dataset definitivo y los casos de uso manual e
+histórico. La capa HTTP se conectará a estos casos de uso sin modificar las reglas.
 
 ## Flujo implementado
 
@@ -36,7 +36,7 @@ reemplaza silenciosamente datos inválidos.
 ## Módulos
 
 - `membership_functions`: función trapezoidal general y funciones hombro.
-- `fuzzifier`: evaluación Singleton de las cuatro etiquetas de cada entrada.
+- `fuzzifier`: evaluación Singleton de las etiquetas configuradas para cada entrada.
 - `rule_base`: generación y validación de la FAM completa de 192 reglas.
 - `inference_engine`: activación, implicación y agregación Mamdani.
 - `defuzzifier`: centroide numérico sobre el universo de salida.
@@ -49,6 +49,12 @@ reemplaza silenciosamente datos inválidos.
   explícita del estado desconocido.
 - `domain/data_processing/reanalysis_joiner.py`: unión estricta por fecha de ERA5
   y ERA5-Land y validación contra los universos del modelo.
+- `application/use_cases`: inferencia manual e inferencia por fecha histórica.
+- `application/ports`: contrato de acceso a la serie histórica, independiente del CSV.
+- `infrastructure/data/repositories`: índice diario de solo lectura con validación
+  de esquema, continuidad, duplicados, faltantes y dominios.
+- `infrastructure/configuration/application_factory.py`: composición de una sola
+  instancia del motor, el repositorio y ambos casos de uso.
 
 ## Configuración versionada
 
@@ -87,6 +93,17 @@ print(result.strongest_rules[0]) # regla principal y fuerza de activación
 `InferenceResult` también entrega las pertenencias de entrada, todas las reglas
 activas, las pertenencias de salida y la curva agregada usada por el centroide.
 
+## Casos de uso
+
+`RunManualInference` recibe los cuatro valores del formulario. No consulta el
+historial. `RunHistoricalInference` recibe una fecha, recupera el registro diario
+preparado y ejecuta la misma instancia del motor Mamdani. También informa si la
+fecha está dentro de junio–septiembre, periodo estacional de calibración.
+
+El repositorio histórico carga una vez
+`data/processed/weather_inputs_2000_2025.csv`, indexa sus 9 497 registros por
+fecha y rechaza el arranque si el archivo incumple el contrato esperado.
+
 ## Pruebas
 
 No se requiere instalar dependencias para ejecutar la suite actual:
@@ -95,6 +112,6 @@ No se requiere instalar dependencias para ejecutar la suite actual:
 python -m unittest discover -s tests -v
 ```
 
-Las pruebas cubren los nodos y hombros de las funciones, cobertura de los universos,
-validación de entradas, las 192 combinaciones, centroide, nueve corridas de
-referencia, explicabilidad y una malla de 648 escenarios.
+Las 49 pruebas cubren funciones de pertenencia, universos, 192 reglas, centroide,
+corridas de referencia, explicabilidad, una malla de 648 escenarios, procesamiento
+meteorológico, auditoría del modelo, repositorio histórico y ambos casos de uso.
