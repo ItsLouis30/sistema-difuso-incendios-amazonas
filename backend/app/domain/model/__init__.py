@@ -1,4 +1,9 @@
-from .errors import FuzzyConfigurationError, FuzzyInferenceError, InputValueError
+from .errors import (
+    DataValidationError,
+    FuzzyConfigurationError,
+    FuzzyInferenceError,
+    InputValueError,
+)
 from .fuzzy import (
     ActiveRule,
     FuzzyRule,
@@ -8,9 +13,20 @@ from .fuzzy import (
     ModelMetadata,
     OutputAction,
 )
+from .weather import (
+    AtmosphericDataset,
+    AtmosphericRecord,
+    DataQualityReport,
+    DatasetMetadata,
+)
 
 __all__ = [
     "ActiveRule",
+    "AtmosphericDataset",
+    "AtmosphericRecord",
+    "DataQualityReport",
+    "DataValidationError",
+    "DatasetMetadata",
     "FuzzyConfigurationError",
     "FuzzyInferenceError",
     "FuzzyRule",
@@ -21,4 +37,3 @@ __all__ = [
     "ModelMetadata",
     "OutputAction",
 ]
-

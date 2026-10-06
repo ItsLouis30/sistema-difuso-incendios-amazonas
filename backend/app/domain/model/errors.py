@@ -13,3 +13,6 @@ class InputValueError(FuzzySystemError, ValueError):
 class FuzzyInferenceError(FuzzySystemError):
     """La inferencia no puede producir una salida valida."""
 
+
+class DataValidationError(ValueError):
+    """Un archivo meteorologico no cumple el contrato de datos."""

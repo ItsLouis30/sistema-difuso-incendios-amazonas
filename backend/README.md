@@ -43,6 +43,8 @@ reemplaza silenciosamente datos inválidos.
 - `explanation`: categoría, recomendación y grados de salida.
 - `system.py`: fachada que ejecuta toda la cascada.
 - `infrastructure/configuration`: construcción del modelo desde JSON versionado.
+- `infrastructure/data/loaders`: lectura segura del CSV ERA5, metadatos y reporte
+  de cobertura, faltantes, duplicados y rangos físicos.
 
 ## Configuración versionada
 

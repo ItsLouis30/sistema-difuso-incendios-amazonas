@@ -1,0 +1,32 @@
+{
+  "dataset": "ERA5",
+  "source_service": "Open-Meteo Historical Weather API",
+  "source_url": "https://archive-api.open-meteo.com/v1/archive",
+  "retrieved_on": "2026-10-06",
+  "raw_file": "data/raw/era5_atmospheric_chachapoyas_2000_2025.csv",
+  "raw_file_sha256": "4de8abe9b1bd0e24144fd34003b486c16e4858c7292279e4664cc6cec3c1c8a1",
+  "requested_coordinates": [-6.2083, -77.8671],
+  "returned_coordinates": [-6.25, -77.75],
+  "returned_elevation_m": 2441.0,
+  "timezone": "America/Lima",
+  "period": ["2000-01-01", "2025-12-31"],
+  "variables": {
+    "precipitation_sum": "mm",
+    "relative_humidity_2m_min": "%",
+    "wind_speed_10m_mean": "m/s",
+    "wind_speed_10m_max": "m/s"
+  },
+  "quality": {
+    "records": 9497,
+    "unique_dates": 9497,
+    "missing_dates": 0,
+    "missing_values": 0,
+    "ranges": {
+      "pp_mm": [0.0, 113.4],
+      "hr_min_pct": [14.0, 92.0],
+      "wind_mean_ms": [0.35, 2.58],
+      "wind_max_ms": [0.71, 5.21]
+    }
+  }
+}
+
