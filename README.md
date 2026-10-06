@@ -27,6 +27,7 @@ procesamiento de datos y su integración mediante casos de uso y API.
   - [x] Descarga y calibración de humedad superficial ERA5-Land
   - [x] Cálculo reproducible de `dias_secos`
   - [x] Unión diaria y generación del dataset procesado
+- [x] Auditoría matemática y semántica de funciones y 192 reglas
 - [ ] API REST del backend
 - [ ] Interfaz web manual e histórica
 - [ ] Gráficos de pertenencia, inferencia y sensibilidad

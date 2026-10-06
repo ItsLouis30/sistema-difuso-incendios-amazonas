@@ -1,0 +1,522 @@
+{
+  "model_id": "mamdani-incendios-amazonas",
+  "model_version": "1.1.0",
+  "memberships": {
+    "hr_min_pct": {
+      "universe": [
+        0.0,
+        100.0
+      ],
+      "unit": "%",
+      "terms": [
+        {
+          "name": "muy_baja",
+          "points": [
+            0.0,
+            0.0,
+            46.0,
+            53.0
+          ]
+        },
+        {
+          "name": "baja",
+          "points": [
+            46.0,
+            53.0,
+            53.0,
+            66.0
+          ]
+        },
+        {
+          "name": "media",
+          "points": [
+            53.0,
+            66.0,
+            66.0,
+            78.0
+          ]
+        },
+        {
+          "name": "alta",
+          "points": [
+            66.0,
+            78.0,
+            100.0,
+            100.0
+          ]
+        }
+      ],
+      "ordered_cores": true,
+      "uncovered_samples": 0,
+      "minimum_max_membership": 0.5,
+      "partition_sum_range": [
+        1.0,
+        1.0
+      ]
+    },
+    "dias_secos": {
+      "universe": [
+        0.0,
+        15.0
+      ],
+      "unit": "dias",
+      "terms": [
+        {
+          "name": "cortos",
+          "points": [
+            0.0,
+            0.0,
+            1.0,
+            2.0
+          ]
+        },
+        {
+          "name": "moderados",
+          "points": [
+            1.0,
+            2.0,
+            2.0,
+            4.0
+          ]
+        },
+        {
+          "name": "prolongados",
+          "points": [
+            2.0,
+            4.0,
+            4.0,
+            7.0
+          ]
+        },
+        {
+          "name": "extremos",
+          "points": [
+            4.0,
+            7.0,
+            15.0,
+            15.0
+          ]
+        }
+      ],
+      "ordered_cores": true,
+      "uncovered_samples": 0,
+      "minimum_max_membership": 0.5,
+      "partition_sum_range": [
+        1.0,
+        1.0
+      ]
+    },
+    "viento_max_ms": {
+      "universe": [
+        0.0,
+        6.0
+      ],
+      "unit": "m/s",
+      "terms": [
+        {
+          "name": "muy_bajo",
+          "points": [
+            0.0,
+            0.0,
+            1.95,
+            2.45
+          ]
+        },
+        {
+          "name": "bajo",
+          "points": [
+            1.95,
+            2.45,
+            2.45,
+            2.95
+          ]
+        },
+        {
+          "name": "medio",
+          "points": [
+            2.45,
+            2.95,
+            2.95,
+            3.75
+          ]
+        },
+        {
+          "name": "alto",
+          "points": [
+            2.95,
+            3.75,
+            6.0,
+            6.0
+          ]
+        }
+      ],
+      "ordered_cores": true,
+      "uncovered_samples": 0,
+      "minimum_max_membership": 0.5,
+      "partition_sum_range": [
+        1.0,
+        1.0
+      ]
+    },
+    "humedad_suelo_superficial_m3m3": {
+      "universe": [
+        0.0,
+        1.0
+      ],
+      "unit": "m3/m3",
+      "terms": [
+        {
+          "name": "seca",
+          "points": [
+            0.0,
+            0.0,
+            0.313,
+            0.354
+          ]
+        },
+        {
+          "name": "intermedia",
+          "points": [
+            0.313,
+            0.354,
+            0.354,
+            0.385
+          ]
+        },
+        {
+          "name": "humeda",
+          "points": [
+            0.354,
+            0.385,
+            1.0,
+            1.0
+          ]
+        }
+      ],
+      "ordered_cores": true,
+      "uncovered_samples": 0,
+      "minimum_max_membership": 0.5,
+      "partition_sum_range": [
+        1.0,
+        1.0
+      ]
+    },
+    "nivel_despliegue_preventivo": {
+      "universe": [
+        0.0,
+        100.0
+      ],
+      "unit": "indice",
+      "terms": [
+        {
+          "name": "muy_bajo",
+          "points": [
+            0.0,
+            0.0,
+            0.0,
+            25.0
+          ]
+        },
+        {
+          "name": "bajo",
+          "points": [
+            0.0,
+            25.0,
+            25.0,
+            50.0
+          ]
+        },
+        {
+          "name": "moderado",
+          "points": [
+            25.0,
+            50.0,
+            50.0,
+            75.0
+          ]
+        },
+        {
+          "name": "alto",
+          "points": [
+            50.0,
+            75.0,
+            75.0,
+            100.0
+          ]
+        },
+        {
+          "name": "muy_alto",
+          "points": [
+            75.0,
+            100.0,
+            100.0,
+            100.0
+          ]
+        }
+      ],
+      "ordered_cores": true,
+      "uncovered_samples": 0,
+      "minimum_max_membership": 0.5,
+      "partition_sum_range": [
+        0.9999999999999999,
+        1.0
+      ]
+    }
+  },
+  "dataset_memberships": {
+    "hr_min_pct": {
+      "observed_range": [
+        14.0,
+        92.0
+      ],
+      "records": 9497,
+      "activation_counts": {
+        "muy_baja": 1575,
+        "baja": 3944,
+        "media": 6186,
+        "alta": 4549
+      },
+      "dominant_counts": {
+        "muy_baja": 1101,
+        "baja": 1930,
+        "media": 3364,
+        "alta": 3102
+      },
+      "all_terms_activated": true
+    },
+    "dias_secos": {
+      "observed_range": [
+        0.0,
+        14.0
+      ],
+      "records": 9497,
+      "activation_counts": {
+        "cortos": 8448,
+        "moderados": 646,
+        "prolongados": 551,
+        "extremos": 249
+      },
+      "dominant_counts": {
+        "cortos": 8448,
+        "moderados": 402,
+        "prolongados": 493,
+        "extremos": 154
+      },
+      "all_terms_activated": true
+    },
+    "viento_max_ms": {
+      "observed_range": [
+        0.71,
+        5.21
+      ],
+      "records": 9497,
+      "activation_counts": {
+        "muy_bajo": 7107,
+        "bajo": 3407,
+        "medio": 2185,
+        "alto": 1024
+      },
+      "dominant_counts": {
+        "muy_bajo": 6130,
+        "bajo": 1713,
+        "medio": 1188,
+        "alto": 466
+      },
+      "all_terms_activated": true
+    },
+    "humedad_suelo_superficial_m3m3": {
+      "observed_range": [
+        0.161,
+        0.443
+      ],
+      "records": 9497,
+      "activation_counts": {
+        "seca": 1829,
+        "intermedia": 2235,
+        "humeda": 7634
+      },
+      "dominant_counts": {
+        "seca": 1290,
+        "intermedia": 1099,
+        "humeda": 7108
+      },
+      "all_terms_activated": true
+    }
+  },
+  "rules": {
+    "count": 192,
+    "unique_antecedents": 192,
+    "output_distribution": {
+      "moderado": 45,
+      "alto": 43,
+      "muy_alto": 33,
+      "bajo": 40,
+      "muy_bajo": 31
+    },
+    "monotonicity": {
+      "comparisons_by_variable": {
+        "humedad_suelo_superficial_m3m3": 128,
+        "viento_max_ms": 144,
+        "hr_min_pct": 144,
+        "dias_secos": 144
+      },
+      "total_comparisons": 560,
+      "strict_changes_by_variable": {
+        "humedad_suelo_superficial_m3m3": 109,
+        "viento_max_ms": 65,
+        "hr_min_pct": 76,
+        "dias_secos": 87
+      },
+      "violations": []
+    },
+    "guardrails": [
+      {
+        "name": "condiciones_benignas_con_suelo_seco",
+        "antecedents": {
+          "hr_min_pct": "alta",
+          "dias_secos": "cortos",
+          "viento_max_ms": "bajo",
+          "humedad_suelo_superficial_m3m3": "seca"
+        },
+        "output": "bajo",
+        "level": 1,
+        "passed": true
+      },
+      {
+        "name": "condiciones_extremas_con_suelo_humedo",
+        "antecedents": {
+          "hr_min_pct": "muy_baja",
+          "dias_secos": "extremos",
+          "viento_max_ms": "alto",
+          "humedad_suelo_superficial_m3m3": "humeda"
+        },
+        "output": "alto",
+        "level": 3,
+        "passed": true
+      },
+      {
+        "name": "minimo_peligro",
+        "antecedents": {
+          "hr_min_pct": "alta",
+          "dias_secos": "cortos",
+          "viento_max_ms": "muy_bajo",
+          "humedad_suelo_superficial_m3m3": "humeda"
+        },
+        "output": "muy_bajo",
+        "level": 0,
+        "passed": true
+      },
+      {
+        "name": "maximo_peligro",
+        "antecedents": {
+          "hr_min_pct": "muy_baja",
+          "dias_secos": "extremos",
+          "viento_max_ms": "alto",
+          "humedad_suelo_superficial_m3m3": "seca"
+        },
+        "output": "muy_alto",
+        "level": 4,
+        "passed": true
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "name": "minimo_peligro",
+      "inputs": {
+        "hr_min_pct": 85.0,
+        "dias_secos": 0.0,
+        "viento_max_ms": 1.5,
+        "humedad_suelo_superficial_m3m3": 0.42
+      },
+      "index": 8.333299999999998,
+      "category": "muy_bajo",
+      "active_rules": 1,
+      "strongest_rule": 141
+    },
+    {
+      "name": "maximo_peligro",
+      "inputs": {
+        "hr_min_pct": 30.0,
+        "dias_secos": 8.0,
+        "viento_max_ms": 4.5,
+        "humedad_suelo_superficial_m3m3": 0.2
+      },
+      "index": 91.66670000000005,
+      "category": "muy_alto",
+      "active_rules": 1,
+      "strongest_rule": 52
+    },
+    {
+      "name": "intermedio",
+      "inputs": {
+        "hr_min_pct": 60.0,
+        "dias_secos": 3.0,
+        "viento_max_ms": 3.0,
+        "humedad_suelo_superficial_m3m3": 0.354
+      },
+      "index": 62.55770138427663,
+      "category": "alto",
+      "active_rules": 8,
+      "strongest_rule": 106
+    }
+  ],
+  "soil_sensitivity": {
+    "combinations": 64,
+    "evaluations": 192,
+    "soil_values": {
+      "seca": 0.2,
+      "intermedia": 0.354,
+      "humeda": 0.42
+    },
+    "violations": [],
+    "examples": [
+      {
+        "inputs": [
+          66.0,
+          4.0,
+          2.95
+        ],
+        "outputs": {
+          "seca": 91.66670000000005,
+          "intermedia": 74.99999999999999,
+          "humeda": 49.99999999999999
+        }
+      }
+    ]
+  },
+  "continuous_soil_diagnostic": {
+    "benigno": {
+      "local_reversals": 15,
+      "upward_category_reversals": 0,
+      "maximum_single_step_reversal": 0.1440196173776318,
+      "output_range": [
+        8.333299999999998,
+        24.999999999999986
+      ]
+    },
+    "intermedio": {
+      "local_reversals": 0,
+      "upward_category_reversals": 0,
+      "maximum_single_step_reversal": 0.0,
+      "output_range": [
+        39.843742857143454,
+        77.97620000000005
+      ]
+    },
+    "extremo": {
+      "local_reversals": 20,
+      "upward_category_reversals": 0,
+      "maximum_single_step_reversal": 0.10990182765513623,
+      "output_range": [
+        74.99999999999999,
+        91.66670000000005
+      ]
+    }
+  },
+  "warnings": [
+    "La superficie crisp presenta oscilaciones locales pequenas en transiciones con consecuentes extremos saturados; no producen ascensos de categoria."
+  ],
+  "passed": true,
+  "status": "approved_with_observations"
+}
