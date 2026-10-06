@@ -47,6 +47,8 @@ reemplaza silenciosamente datos inválidos.
   de cobertura, faltantes, duplicados y rangos físicos.
 - `domain/data_processing`: cálculo determinista de rachas secas con propagación
   explícita del estado desconocido.
+- `domain/data_processing/reanalysis_joiner.py`: unión estricta por fecha de ERA5
+  y ERA5-Land y validación contra los universos del modelo.
 
 ## Configuración versionada
 

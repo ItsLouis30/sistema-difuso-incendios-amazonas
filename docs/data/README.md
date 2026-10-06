@@ -90,7 +90,42 @@ En la serie completa se obtuvieron 9,497 valores conocidos, cero desconocidos y
 una racha máxima de 14 días. Por tanto, el universo difuso `0–15` cubre la serie
 histórica sin truncamiento.
 
+## Paso 3: unión ERA5 y ERA5-Land
+
+`ReanalysisJoiner` exige igualdad exacta de fechas entre la serie atmosférica, el
+contador de días secos y la humedad del suelo. La unión falla ante:
+
+- una fecha faltante o adicional;
+- una fecha duplicada;
+- cualquier entrada desconocida;
+- un valor fuera del universo configurado;
+- una discrepancia entre la precipitación y la usada para calcular la racha.
+
+El dataset definitivo se genera desde la raíz mediante:
+
+```powershell
+python scripts/data/build_prepared_dataset.py
+```
+
+Produce:
+
+```text
+data/processed/weather_inputs_2000_2025.csv
+data/metadata/prepared_dataset_v1.json
+```
+
+El resultado contiene 9,497 fechas únicas, cero faltantes y las siguientes
+columnas:
+
+```text
+fecha,pp_mm,hr_min_pct,viento_medio_ms,viento_max_ms,dias_secos,humedad_suelo_superficial_m3m3
+```
+
+Las cuatro entradas se encuentran dentro de los universos de la versión 1.1.0
+del modelo Mamdani. Los hashes de ambas fuentes y del resultado se conservan en
+el manifiesto del dataset.
+
 ## Próximo paso
 
-Leer y validar la serie ERA5-Land, unirla por fecha con este archivo intermedio y
-generar el dataset definitivo de cuatro entradas.
+Implementar el repositorio de consulta por fecha y los casos de uso de inferencia
+manual e histórica.

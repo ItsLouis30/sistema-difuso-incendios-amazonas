@@ -1,0 +1,82 @@
+{
+  "dataset_version": "1.0.0",
+  "sources": {
+    "atmospheric": {
+      "file": "data/raw/era5_atmospheric_chachapoyas_2000_2025.csv",
+      "sha256": "4de8abe9b1bd0e24144fd34003b486c16e4858c7292279e4664cc6cec3c1c8a1",
+      "dataset": "ERA5",
+      "coordinates": [
+        -6.25,
+        -77.75
+      ]
+    },
+    "soil_moisture": {
+      "file": "data/raw/era5_land_soil_moisture_chachapoyas_2000_2025.csv",
+      "sha256": "12b56f5ef07b3b4926b07001276c6082a724f37bb3eecaee4acb7c793980e704",
+      "dataset": "ERA5-Land",
+      "coordinates": [
+        -6.199997,
+        -77.9
+      ]
+    }
+  },
+  "output": {
+    "file": "data/processed/weather_inputs_2000_2025.csv",
+    "sha256": "78d38ce17014bf8f2b7b3f496ccead3156267c3c0bf2085f2a516c9753d4c649",
+    "records": 9497,
+    "first_date": "2000-01-01",
+    "last_date": "2025-12-31",
+    "missing_values": 0,
+    "duplicate_dates": 0,
+    "model_ready": true
+  },
+  "variables": {
+    "pp_mm": {
+      "unit": "mm",
+      "range": [
+        0.0,
+        113.4
+      ]
+    },
+    "hr_min_pct": {
+      "unit": "%",
+      "range": [
+        14.0,
+        92.0
+      ]
+    },
+    "viento_medio_ms": {
+      "unit": "m/s",
+      "range": [
+        0.35,
+        2.58
+      ]
+    },
+    "viento_max_ms": {
+      "unit": "m/s",
+      "range": [
+        0.71,
+        5.21
+      ]
+    },
+    "dias_secos": {
+      "unit": "dias",
+      "range": [
+        0,
+        14
+      ],
+      "precipitation_threshold_mm": 1.0
+    },
+    "humedad_suelo_superficial_m3m3": {
+      "unit": "m3/m3",
+      "depth_cm": [
+        0,
+        7
+      ],
+      "range": [
+        0.161,
+        0.443
+      ]
+    }
+  }
+}

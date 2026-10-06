@@ -64,3 +64,27 @@ class AtmosphericDataset:
     metadata: DatasetMetadata
     records: tuple[AtmosphericRecord, ...]
     quality: DataQualityReport
+
+
+@dataclass(frozen=True, slots=True)
+class SoilMoistureRecord:
+    date: date
+    soil_moisture_m3m3: float | None
+
+
+@dataclass(frozen=True, slots=True)
+class SoilMoistureDataset:
+    metadata: DatasetMetadata
+    records: tuple[SoilMoistureRecord, ...]
+    quality: DataQualityReport
+
+
+@dataclass(frozen=True, slots=True)
+class PreparedWeatherRecord:
+    date: date
+    pp_mm: float
+    hr_min_pct: float
+    wind_mean_ms: float
+    wind_max_ms: float
+    dry_days: int
+    soil_moisture_m3m3: float

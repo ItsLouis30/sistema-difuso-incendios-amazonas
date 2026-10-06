@@ -19,6 +19,9 @@ from .weather import (
     DataQualityReport,
     DatasetMetadata,
     DryDayObservation,
+    PreparedWeatherRecord,
+    SoilMoistureDataset,
+    SoilMoistureRecord,
 )
 
 __all__ = [
@@ -29,6 +32,9 @@ __all__ = [
     "DataValidationError",
     "DatasetMetadata",
     "DryDayObservation",
+    "PreparedWeatherRecord",
+    "SoilMoistureDataset",
+    "SoilMoistureRecord",
     "FuzzyConfigurationError",
     "FuzzyInferenceError",
     "FuzzyRule",

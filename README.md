@@ -22,11 +22,11 @@ procesamiento de datos y su integración mediante casos de uso y API.
 - [x] Configuración versionada del modelo difuso
 - [x] Motor Mamdani y explicación de reglas
 - [x] Pruebas unitarias del núcleo y corridas de referencia
-- [ ] Procesamiento y validación de la serie histórica
+- [x] Procesamiento y validación de la serie histórica
   - [x] Descarga reproducible y validación del archivo atmosférico ERA5
   - [x] Descarga y calibración de humedad superficial ERA5-Land
   - [x] Cálculo reproducible de `dias_secos`
-  - [ ] Unión diaria y generación del dataset procesado
+  - [x] Unión diaria y generación del dataset procesado
 - [ ] API REST del backend
 - [ ] Interfaz web manual e histórica
 - [ ] Gráficos de pertenencia, inferencia y sensibilidad
