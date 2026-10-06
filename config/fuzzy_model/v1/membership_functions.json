@@ -1,0 +1,51 @@
+{
+  "inputs": {
+    "hr_min_pct": {
+      "display_name": "Humedad relativa minima diaria",
+      "unit": "%",
+      "universe": [0.0, 100.0],
+      "terms": [
+        {"name": "muy_baja", "points": [0.0, 0.0, 46.0, 53.0]},
+        {"name": "baja", "points": [46.0, 53.0, 53.0, 66.0]},
+        {"name": "media", "points": [53.0, 66.0, 66.0, 78.0]},
+        {"name": "alta", "points": [66.0, 78.0, 100.0, 100.0]}
+      ]
+    },
+    "dias_secos": {
+      "display_name": "Dias consecutivos sin lluvia significativa",
+      "unit": "dias",
+      "universe": [0.0, 15.0],
+      "terms": [
+        {"name": "cortos", "points": [0.0, 0.0, 1.0, 2.0]},
+        {"name": "moderados", "points": [1.0, 2.0, 2.0, 4.0]},
+        {"name": "prolongados", "points": [2.0, 4.0, 4.0, 7.0]},
+        {"name": "extremos", "points": [4.0, 7.0, 15.0, 15.0]}
+      ]
+    },
+    "viento_max_ms": {
+      "display_name": "Velocidad maxima diaria del viento a 10 m",
+      "unit": "m/s",
+      "universe": [0.0, 6.0],
+      "terms": [
+        {"name": "muy_bajo", "points": [0.0, 0.0, 1.95, 2.45]},
+        {"name": "bajo", "points": [1.95, 2.45, 2.45, 2.95]},
+        {"name": "medio", "points": [2.45, 2.95, 2.95, 3.75]},
+        {"name": "alto", "points": [2.95, 3.75, 6.0, 6.0]}
+      ]
+    }
+  },
+  "output": {
+    "name": "nivel_despliegue_preventivo",
+    "display_name": "Nivel de despliegue preventivo",
+    "unit": "indice",
+    "universe": [0.0, 100.0],
+    "terms": [
+      {"name": "muy_bajo", "points": [0.0, 0.0, 0.0, 25.0]},
+      {"name": "bajo", "points": [0.0, 25.0, 25.0, 50.0]},
+      {"name": "moderado", "points": [25.0, 50.0, 50.0, 75.0]},
+      {"name": "alto", "points": [50.0, 75.0, 75.0, 100.0]},
+      {"name": "muy_alto", "points": [75.0, 100.0, 100.0, 100.0]}
+    ]
+  }
+}
+

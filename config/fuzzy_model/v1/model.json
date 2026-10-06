@@ -1,0 +1,14 @@
+{
+  "model_id": "mamdani-incendios-amazonas",
+  "version": "1.0.0",
+  "model_type": "mamdani",
+  "and_operator": "minimum",
+  "implication_operator": "minimum",
+  "aggregation_operator": "maximum",
+  "defuzzification_method": "centroid",
+  "output_resolution": 0.05,
+  "dry_day_precipitation_threshold_mm": 1.0,
+  "study_area": "Chachapoyas, Amazonas, Peru",
+  "data_source": "ERA5 reanalysis"
+}
+

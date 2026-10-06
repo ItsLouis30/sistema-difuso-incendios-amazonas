@@ -1,0 +1,21 @@
+[project]
+name = "sistema-difuso-g8-backend"
+version = "0.1.0"
+description = "Nucleo Mamdani para despliegue preventivo ante condiciones favorables a incendios forestales."
+requires-python = ">=3.12"
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-cov>=5.0"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+
+[tool.coverage.run]
+source = ["app"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+

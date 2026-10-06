@@ -1,0 +1,17 @@
+{
+  "antecedent_order": ["viento_max_ms", "hr_min_pct", "dias_secos"],
+  "term_order": {
+    "viento_max_ms": ["muy_bajo", "bajo", "medio", "alto"],
+    "hr_min_pct": ["muy_baja", "baja", "media", "alta"],
+    "dias_secos": ["cortos", "moderados", "prolongados", "extremos"],
+    "nivel_despliegue_preventivo": ["muy_bajo", "bajo", "moderado", "alto", "muy_alto"]
+  },
+  "fam": [
+    [[1, 2, 2, 3], [0, 1, 2, 2], [0, 0, 1, 2], [0, 0, 1, 2]],
+    [[2, 3, 3, 3], [1, 2, 2, 3], [0, 1, 2, 2], [0, 0, 1, 2]],
+    [[2, 3, 4, 4], [2, 3, 3, 4], [1, 2, 3, 3], [0, 1, 2, 3]],
+    [[3, 4, 4, 4], [2, 3, 4, 4], [1, 2, 3, 4], [0, 1, 2, 3]]
+  ],
+  "numbering": "16 * wind_index + 4 * humidity_index + dry_days_index + 1"
+}
+

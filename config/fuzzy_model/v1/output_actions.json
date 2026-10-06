@@ -1,0 +1,22 @@
+{
+  "muy_bajo": {
+    "label": "Muy bajo",
+    "recommendation": "Mantener vigilancia meteorologica rutinaria."
+  },
+  "bajo": {
+    "label": "Bajo",
+    "recommendation": "Revisar disponibilidad basica de personal y medios preventivos."
+  },
+  "moderado": {
+    "label": "Moderado",
+    "recommendation": "Reforzar monitoreo y preparar recursos para una activacion preventiva."
+  },
+  "alto": {
+    "label": "Alto",
+    "recommendation": "Activar despliegue preventivo y vigilancia focalizada en zonas expuestas."
+  },
+  "muy_alto": {
+    "label": "Muy alto",
+    "recommendation": "Aplicar el nivel maximo de despliegue preventivo definido por la organizacion."
+  }
+}
