@@ -29,7 +29,7 @@ implementados y verificados. La siguiente etapa es exponerlos mediante la API.
   - [x] Unión diaria y generación del dataset procesado
 - [x] Auditoría matemática y semántica de funciones y 192 reglas
 - [x] Repositorio histórico y casos de uso manual e histórico
-- [ ] API REST del backend
+- [x] API REST del backend
 - [ ] Interfaz web manual e histórica
 - [ ] Gráficos de pertenencia, inferencia y sensibilidad
 - [ ] Pruebas de integración y corridas demostrativas de extremo a extremo
@@ -482,15 +482,31 @@ La revisión por expertos y el contraste con incendios reales quedan fuera del a
 
 ## Desarrollo local
 
-Los comandos definitivos se añadirán cuando se creen los proyectos backend y frontend. El flujo previsto será:
+La API requiere Python 3.12 o superior. Desde `backend`:
 
-```text
-Terminal 1 → instalar dependencias del backend → iniciar API
-Terminal 2 → instalar dependencias del frontend → iniciar aplicación web
-Terminal 3 → ejecutar pruebas y verificaciones de calidad
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev]"
+python -m uvicorn app.main:app --reload
 ```
 
-No deben documentarse comandos como disponibles hasta que los archivos de configuración correspondientes existan y hayan sido probados.
+Servicios disponibles:
+
+```text
+API:          http://127.0.0.1:8000
+Swagger UI:   http://127.0.0.1:8000/docs
+ReDoc:        http://127.0.0.1:8000/redoc
+OpenAPI JSON: http://127.0.0.1:8000/openapi.json
+```
+
+Ejecutar todas las pruebas:
+
+```powershell
+python -m unittest discover -s tests -v
+```
+
+Las instrucciones del frontend se añadirán con su implementación.
 
 ## Principios para contribuir
 

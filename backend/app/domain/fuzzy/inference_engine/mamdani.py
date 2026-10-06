@@ -37,6 +37,10 @@ class MamdaniInferenceEngine:
     def output_universe(self) -> tuple[float, ...]:
         return self._universe
 
+    @property
+    def rule_count(self) -> int:
+        return len(self._rule_base.rules)
+
     def _build_universe(self, step: float) -> tuple[float, ...]:
         minimum = self._output.minimum
         maximum = self._output.maximum

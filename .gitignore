@@ -5,6 +5,7 @@ __pycache__/
 .coverage
 htmlcov/
 .venv/
+*.egg-info/
 
 # Entornos y secretos locales
 .env

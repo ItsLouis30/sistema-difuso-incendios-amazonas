@@ -32,6 +32,10 @@ class MamdaniSystem:
         self._engine = inference_engine
         self._classifier = classifier
 
+    @property
+    def rule_count(self) -> int:
+        return self._engine.rule_count
+
     def evaluate(self, crisp_inputs: Mapping[str, float]) -> InferenceResult:
         memberships = self._fuzzifier.fuzzify(crisp_inputs)
         normalized_inputs = {name: float(value) for name, value in crisp_inputs.items()}

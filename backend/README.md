@@ -1,8 +1,8 @@
-# Backend: núcleo Mamdani
+# Backend: núcleo Mamdani y API REST
 
 El backend implementa el dominio matemático, el procesamiento de ERA5/ERA5-Land,
-el acceso de solo lectura al dataset definitivo y los casos de uso manual e
-histórico. La capa HTTP se conectará a estos casos de uso sin modificar las reglas.
+el acceso de solo lectura al dataset definitivo, los casos de uso manual e
+histórico y la API HTTP que los expone.
 
 ## Flujo implementado
 
@@ -55,6 +55,9 @@ reemplaza silenciosamente datos inválidos.
   de esquema, continuidad, duplicados, faltantes y dominios.
 - `infrastructure/configuration/application_factory.py`: composición de una sola
   instancia del motor, el repositorio y ambos casos de uso.
+- `api/routes`: endpoints de salud, modelo, historial e inferencias.
+- `api/schemas`: contratos Pydantic de solicitudes y respuestas.
+- `api/error_handlers.py`: formato uniforme para errores de validación y fechas.
 
 ## Configuración versionada
 
@@ -104,6 +107,23 @@ El repositorio histórico carga una vez
 `data/processed/weather_inputs_2000_2025.csv`, indexa sus 9 497 registros por
 fecha y rechaza el arranque si el archivo incumple el contrato esperado.
 
+## API REST
+
+Instalar el backend con sus herramientas de desarrollo:
+
+```powershell
+python -m pip install -e ".[dev]"
+```
+
+Iniciar el servidor desde esta carpeta:
+
+```powershell
+python -m uvicorn app.main:app --reload
+```
+
+La documentación interactiva queda en `http://127.0.0.1:8000/docs`. El contrato
+detallado y los ejemplos se encuentran en `docs/api/README.md`.
+
 ## Pruebas
 
 No se requiere instalar dependencias para ejecutar la suite actual:
@@ -112,6 +132,7 @@ No se requiere instalar dependencias para ejecutar la suite actual:
 python -m unittest discover -s tests -v
 ```
 
-Las 49 pruebas cubren funciones de pertenencia, universos, 192 reglas, centroide,
+Las 57 pruebas cubren funciones de pertenencia, universos, 192 reglas, centroide,
 corridas de referencia, explicabilidad, una malla de 648 escenarios, procesamiento
-meteorológico, auditoría del modelo, repositorio histórico y ambos casos de uso.
+meteorológico, auditoría del modelo, repositorio histórico, casos de uso y contratos
+HTTP de la API.
