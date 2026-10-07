@@ -1,4 +1,4 @@
-import { CloudSun, Droplets, Gauge, Sprout, Wind, type LucideIcon } from 'lucide-react'
+import { CloudSun, Droplets, Sprout, Wind, type LucideIcon } from 'lucide-react'
 import type { CategoryCode, InferenceRequest } from '../types/api'
 
 export type InputKey = keyof InferenceRequest
@@ -78,11 +78,12 @@ export const CATEGORY_META: Record<
   CategoryCode,
   { label: string; color: string; className: string }
 > = {
-  muy_bajo: { label: 'Muy bajo', color: '#4ade80', className: 'level-very-low' },
-  bajo: { label: 'Bajo', color: '#a3e635', className: 'level-low' },
-  moderado: { label: 'Moderado', color: '#facc15', className: 'level-moderate' },
-  alto: { label: 'Alto', color: '#fb923c', className: 'level-high' },
-  muy_alto: { label: 'Muy alto', color: '#f87171', className: 'level-very-high' },
+  // Rampa secuencial: a mayor nivel de despliegue, tono brasa más intenso.
+  muy_bajo: { label: 'Muy bajo', color: '#e9e1dc', className: 'level-very-low' },
+  bajo: { label: 'Bajo', color: '#f2c2ae', className: 'level-low' },
+  moderado: { label: 'Moderado', color: '#e8946f', className: 'level-moderate' },
+  alto: { label: 'Alto', color: '#d2582f', className: 'level-high' },
+  muy_alto: { label: 'Muy alto', color: '#8e2f16', className: 'level-very-high' },
 }
 
 export const TERM_LABELS: Record<string, string> = {
@@ -115,4 +116,3 @@ export const PIPELINE = [
   'Categoría',
 ]
 
-export const GaugeIcon = Gauge

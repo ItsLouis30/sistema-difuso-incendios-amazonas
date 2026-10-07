@@ -1,13 +1,15 @@
-import { CalendarRange, Database, LoaderCircle, RefreshCw, TrendingDown, TrendingUp, CalendarDays } from 'lucide-react'
+import { CalendarDays, Database, LoaderCircle, RefreshCw, TrendingDown, TrendingUp } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CATEGORY_META } from '../app/constants'
 import { dateRangeEndingAt, formatDate, formatNumber } from '../app/format'
 import { useAppContext } from '../app/AppContext'
 import { HistoryChart } from '../components/charts/HistoryChart'
+import { Card, CardTitle, HeroBand, IconCircle, Pill } from '../components/common/Bento'
 import { ErrorState } from '../components/common/Feedback'
-import { PageHeader } from '../components/common/PageHeader'
 import { api } from '../services/api/client'
 import type { HistoryPoint } from '../types/api'
+
+const WINDOWS = [7, 14, 30]
 
 export function HistoryPage() {
   const { historyRange } = useAppContext()
@@ -51,157 +53,124 @@ export function HistoryPage() {
     }
   }, [series])
 
+  const stats = [
+    { label: 'Promedio del periodo', value: summary ? formatNumber(summary.average, 2) : '--', note: 'Índice preventivo 0–100', Icon: Database },
+    { label: 'Valor mínimo', value: summary ? formatNumber(summary.minimum.indice, 2) : '--', note: summary ? formatDate(summary.minimum.fecha) : 'Sin datos', Icon: TrendingDown },
+    { label: 'Valor máximo', value: summary ? formatNumber(summary.maximum.indice, 2) : '--', note: summary ? formatDate(summary.maximum.fecha) : 'Sin datos', Icon: TrendingUp },
+    { label: 'Cobertura consultada', value: `${series.length}/${days}`, note: 'Registros diarios', Icon: CalendarDays },
+  ]
+
   return (
-    <div className="max-w-[1600px] mx-auto pb-12">
-      <PageHeader
-        eyebrow="Serie histórica • ERA5 / ERA5-Land"
-        title="Evolución del índice preventivo"
-        description="Explora cómo respondió el modelo a condiciones diarias históricas."
-        action={
-          <span className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-xl text-sm font-bold shadow-sm">
-            <Database size={16} /> 9 497 días
-          </span>
+    <>
+      <HeroBand
+        left={
+          <>
+            <label className="flex items-center gap-2 rounded-full border border-line bg-white py-2 pl-4 pr-2 text-sm">
+              <CalendarDays size={16} className="text-muted" />
+              <span className="sr-only">Fecha final</span>
+              <input
+                id="history-end"
+                type="date"
+                className="bg-transparent outline-none"
+                value={endDate}
+                min={historyRange?.fecha_inicial ?? '2000-01-01'}
+                max={historyRange?.fecha_final ?? '2025-12-31'}
+                onChange={(event) => setEndDate(event.target.value)}
+              />
+            </label>
+            <div className="flex rounded-full border border-line bg-white p-1" role="group" aria-label="Ventana temporal">
+              {WINDOWS.map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setDays(value)}
+                  aria-pressed={days === value}
+                  className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${days === value ? 'bg-ink text-white' : 'text-muted hover:text-ink'}`}
+                >
+                  {value} días
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => void loadSeries(endDate, days)}
+              disabled={loading}
+              aria-label="Actualizar serie"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-ember-500 text-white transition-colors hover:bg-ember-600 disabled:opacity-60"
+            >
+              <RefreshCw size={17} className={loading ? 'animate-spin' : ''} />
+            </button>
+          </>
         }
+        title="¿Cómo evolucionó el riesgo?"
+        subtitle={`${days} días hasta el ${formatDate(endDate)}.`}
       />
 
-      <section className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-8 flex flex-col md:flex-row md:items-end gap-6">
-        <div className="flex-1">
-          <label htmlFor="history-end" className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-            <CalendarRange size={16} className="text-emerald-600" /> Fecha final
-          </label>
-          <input 
-            id="history-end" 
-            type="date" 
-            className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:outline-none text-gray-800 font-medium"
-            value={endDate} 
-            min={historyRange?.fecha_inicial ?? '2000-01-01'} 
-            max={historyRange?.fecha_final ?? '2025-12-31'} 
-            onChange={(event) => setEndDate(event.target.value)} 
+      {error && <div className="px-4 pt-4 md:px-6"><ErrorState message={error} /></div>}
+
+      <div className="grid grid-cols-1 gap-4 px-4 pb-6 pt-4 sm:grid-cols-2 md:px-6 xl:grid-cols-12">
+        {stats.map(({ label, value, note, Icon }) => (
+          <Card key={label} className="flex flex-col gap-3 xl:col-span-3">
+            <IconCircle>
+              <Icon size={16} />
+            </IconCircle>
+            <div>
+              <span className="text-xs text-muted">{label}</span>
+              <strong className="block text-[28px] font-semibold leading-tight tabular-nums">{value}</strong>
+              <small className="text-xs text-muted">{note}</small>
+            </div>
+          </Card>
+        ))}
+
+        <Card className="flex flex-col gap-4 sm:col-span-2 xl:col-span-8">
+          <CardTitle
+            title="Índice por fecha"
+            caption="Cada barra es una inferencia histórica independiente"
+            action={
+              <div className="hidden flex-wrap justify-end gap-2 md:flex">
+                {Object.entries(CATEGORY_META).map(([key, meta]) => (
+                  <span key={key} className="flex items-center gap-1.5 text-[11px] text-muted">
+                    <i className="h-2 w-2 rounded-full" style={{ background: meta.color }} />
+                    {meta.label}
+                  </span>
+                ))}
+              </div>
+            }
           />
-        </div>
-        <div className="flex-1">
-          <span className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
-            <CalendarDays size={16} className="text-emerald-600" /> Ventana temporal
-          </span>
-          <div className="flex bg-gray-50 p-1 rounded-xl border border-gray-200">
-            {[7, 14, 30].map((value) => (
-              <button 
-                key={value} 
-                className={`flex-1 py-1.5 text-sm font-medium rounded-lg transition-colors ${days === value ? 'bg-white text-emerald-700 shadow-sm font-bold' : 'text-gray-500 hover:text-gray-700'}`}
-                onClick={() => setDays(value)}
-              >
-                {value} días
-              </button>
+          <div className="h-[340px]">
+            {loading ? (
+              <div className="flex h-full flex-col items-center justify-center gap-3 text-muted">
+                <LoaderCircle className="animate-spin" size={28} />
+                <span className="text-sm">Consultando {days} inferencias históricas…</span>
+              </div>
+            ) : series.length ? (
+              <HistoryChart data={series} />
+            ) : (
+              <div className="flex h-full items-center justify-center rounded-3xl bg-shell text-sm text-muted">
+                No hay datos para mostrar.
+              </div>
+            )}
+          </div>
+        </Card>
+
+        <Card className="flex flex-col gap-3 sm:col-span-2 xl:col-span-4">
+          <CardTitle title="Detalle diario" caption="Sin predicción espacial" action={<Pill>{series.length} días</Pill>} />
+          <ol className="no-scrollbar max-h-[360px] space-y-1.5 overflow-y-auto">
+            {[...series].reverse().map((point) => (
+              <li key={point.fecha} className="flex items-center justify-between gap-3 rounded-2xl border border-line px-3 py-2 text-sm">
+                <span className="text-muted">{formatDate(point.fecha)}</span>
+                <span className="flex items-center gap-3">
+                  <strong className="font-medium tabular-nums">{formatNumber(point.indice, 2)}</strong>
+                  <Pill className="w-24 justify-center">
+                    <i className="h-2 w-2 rounded-full" style={{ background: CATEGORY_META[point.codigo].color }} />
+                    {point.categoria}
+                  </Pill>
+                </span>
+              </li>
             ))}
-          </div>
-        </div>
-        <button 
-          className="md:w-auto w-full flex items-center justify-center gap-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-6 py-2.5 rounded-xl font-bold transition-colors disabled:opacity-50"
-          onClick={() => void loadSeries(endDate, days)} 
-          disabled={loading}
-        >
-          <RefreshCw className={loading ? 'animate-spin' : ''} size={18} /> 
-          <span>Actualizar</span>
-        </button>
-      </section>
-
-      {error && <div className="mb-8"><ErrorState message={error} /></div>}
-
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <article className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-          <span className="text-sm font-bold text-gray-500 mb-2 block">Promedio del periodo</span>
-          <strong className="text-3xl font-black text-gray-900 block mb-1">{summary ? formatNumber(summary.average, 2) : '--'}</strong>
-          <small className="text-xs text-gray-400 font-medium">Índice preventivo 0-100</small>
-        </article>
-        <article className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-          <span className="text-sm font-bold text-gray-500 mb-2 flex items-center gap-1.5"><TrendingDown size={16} className="text-green-500" /> Valor mínimo</span>
-          <strong className="text-3xl font-black text-gray-900 block mb-1">{summary ? formatNumber(summary.minimum.indice, 2) : '--'}</strong>
-          <small className="text-xs text-gray-400 font-medium">{summary ? formatDate(summary.minimum.fecha) : 'Sin datos'}</small>
-        </article>
-        <article className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-          <span className="text-sm font-bold text-gray-500 mb-2 flex items-center gap-1.5"><TrendingUp size={16} className="text-red-500" /> Valor máximo</span>
-          <strong className="text-3xl font-black text-gray-900 block mb-1">{summary ? formatNumber(summary.maximum.indice, 2) : '--'}</strong>
-          <small className="text-xs text-gray-400 font-medium">{summary ? formatDate(summary.maximum.fecha) : 'Sin datos'}</small>
-        </article>
-        <article className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-          <span className="text-sm font-bold text-gray-500 mb-2 block">Cobertura consultada</span>
-          <strong className="text-3xl font-black text-gray-900 block mb-1">{series.length}/{days}</strong>
-          <small className="text-xs text-gray-400 font-medium">Registros diarios</small>
-        </article>
-      </section>
-
-      <section className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm mb-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-          <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 block mb-1">Índice por fecha</span>
-            <h2 className="text-lg font-bold text-gray-900">{days} días hasta el {formatDate(endDate)}</h2>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {Object.entries(CATEGORY_META).map(([key, meta]) => (
-              <span key={key} className="flex items-center gap-1.5 text-xs font-medium text-gray-600">
-                <i className="w-2.5 h-2.5 rounded-full" style={{ background: meta.color }} />
-                {meta.label}
-              </span>
-            ))}
-          </div>
-        </div>
-        
-        <div className="h-[350px]">
-          {loading ? (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-gray-400">
-              <LoaderCircle className="animate-spin" size={32} />
-              <span className="text-sm font-medium">Consultando {days} inferencias históricas...</span>
-            </div>
-          ) : series.length ? (
-            <HistoryChart data={series} />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400 font-medium text-sm bg-gray-50 rounded-xl">
-              No hay datos para mostrar.
-            </div>
-          )}
-        </div>
-      </section>
-
-      <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50">
-          <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1">Detalle diario</span>
-            <h2 className="text-base font-bold text-gray-900">Resultados calculados</h2>
-          </div>
-          <span className="text-xs font-medium text-gray-500 bg-white px-2 py-1 rounded-md border border-gray-200">
-            Sin predicción espacial
-          </span>
-        </div>
-        
-        <div className="overflow-x-auto max-h-[400px]">
-          <table className="w-full text-left border-collapse min-w-[500px]">
-            <thead className="bg-white sticky top-0 shadow-[0_1px_2px_rgba(0,0,0,0.05)] z-10">
-              <tr>
-                <th className="px-5 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">Fecha</th>
-                <th className="px-5 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">Índice</th>
-                <th className="px-5 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">Categoría</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {[...series].reverse().map((point) => { 
-                const meta = CATEGORY_META[point.codigo]; 
-                return (
-                  <tr key={point.fecha} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-5 py-3 text-sm text-gray-600 font-medium">{formatDate(point.fecha)}</td>
-                    <td className="px-5 py-3 text-sm"><strong className="text-gray-900">{formatNumber(point.indice, 2)}</strong></td>
-                    <td className="px-5 py-3">
-                      <span className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 bg-white px-2.5 py-1 rounded-full border border-gray-100 shadow-sm">
-                        <i className="w-2.5 h-2.5 rounded-full" style={{ background: meta.color }} />
-                        {point.categoria}
-                      </span>
-                    </td>
-                  </tr>
-                ) 
-              })}
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </div>
+          </ol>
+        </Card>
+      </div>
+    </>
   )
 }

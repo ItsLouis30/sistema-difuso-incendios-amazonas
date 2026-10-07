@@ -1,107 +1,73 @@
-import {
-  BookOpenText,
-  ChartNoAxesCombined,
-  ChevronLeft,
-  Globe,
-  LayoutDashboard,
-  LogOut,
-  CalendarDays,
-  SlidersHorizontal
-} from 'lucide-react'
+import { BookOpenText, CalendarDays, ChartNoAxesCombined, Flame, SlidersHorizontal } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAppContext } from '../../app/AppContext'
 
 const navItems = [
-  { to: '/manual', label: 'Evaluación Manual', Icon: SlidersHorizontal },
-  { to: '/historico', label: 'Evaluación Histórica', Icon: CalendarDays },
+  { to: '/manual', label: 'Manual', Icon: SlidersHorizontal },
+  { to: '/historico', label: 'Histórico', Icon: CalendarDays },
   { to: '/historial', label: 'Tendencias', Icon: ChartNoAxesCombined },
   { to: '/metodologia', label: 'Metodología', Icon: BookOpenText },
 ]
 
 export function AppShell() {
-  const { backendOnline } = useAppContext()
-  
+  const { backendOnline, model } = useAppContext()
+  const status =
+    backendOnline === null
+      ? { text: 'Conectando…', dot: 'bg-[#c4c4c4]' }
+      : backendOnline
+        ? { text: 'API conectada', dot: 'bg-[#1f8a5b]' }
+        : { text: 'API desconectada', dot: 'bg-ember-500' }
+
   return (
-    <div className="flex h-screen bg-[#F4F6F8] font-sans text-gray-800 overflow-hidden md:p-4 lg:p-6 gap-6">
-      {/* Sidebar - Capsule Style */}
-      <aside className="w-72 bg-white rounded-[2rem] flex flex-col shadow-xl shadow-gray-200/50 z-10 hidden md:flex h-full overflow-hidden border border-gray-100/50 shrink-0">
-        <div className="flex items-center justify-between px-6 py-8">
+    <div className="min-h-screen p-0 sm:p-4 lg:p-8">
+      <div className="mx-auto max-w-[1600px] overflow-hidden bg-shell sm:rounded-[40px]">
+        <header className="flex flex-wrap items-center gap-4 bg-band px-5 pt-6 md:px-8">
           <div className="flex items-center gap-3">
-            <div className="bg-emerald-600 text-white p-2.5 rounded-2xl shadow-lg shadow-emerald-600/30">
-              <Globe size={24} />
-            </div>
-            <span className="font-black text-lg tracking-tight text-gray-900 leading-tight">Sistema Difuso<br/><span className="text-sm font-bold text-emerald-600">Grupo 8</span></span>
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-ink text-white">
+              <Flame size={22} strokeWidth={2.2} />
+            </span>
+            <span className="leading-tight">
+              <strong className="block font-display text-lg font-semibold">Sistema Difuso</strong>
+              <span className="text-sm text-muted">Incendios · Chachapoyas, Amazonas</span>
+            </span>
           </div>
-        </div>
 
-        <nav className="flex-1 px-4 py-2 space-y-2 overflow-y-auto custom-scrollbar">
-          <div className="px-4 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider">
-            Plataforma
-          </div>
-          {navItems.map(({ to, label, Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                `flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold transition-all duration-300 ${
-                  isActive
-                    ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/25 scale-[1.02]'
-                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
-                }`
-              }
-            >
-              <Icon size={20} strokeWidth={2.5} />
-              <span>{label}</span>
-            </NavLink>
-          ))}
-        </nav>
+          <nav
+            aria-label="Secciones"
+            className="no-scrollbar order-3 flex w-full gap-2 overflow-x-auto md:order-none md:ml-auto md:w-auto"
+          >
+            {navItems.map(({ to, label, Icon }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={({ isActive }) =>
+                  `flex shrink-0 items-center gap-2 min-h-11 rounded-full px-[18px] text-sm font-medium transition-colors ${
+                    isActive ? 'bg-ink text-white' : 'border border-line bg-white text-ink hover:bg-[#f0f0f0]'
+                  }`
+                }
+              >
+                <Icon size={16} />
+                {label}
+              </NavLink>
+            ))}
+          </nav>
 
-        <div className="p-4 border-t border-gray-100 bg-gray-50/50 mt-auto">
-          <div className={`px-4 py-3.5 rounded-2xl text-sm font-bold flex items-center gap-3 ${
-            backendOnline === null ? 'bg-white text-gray-500 border border-gray-100' : 
-            backendOnline ? 'bg-white text-green-700 border border-green-100 shadow-sm' : 'bg-white text-red-700 border border-red-100 shadow-sm'
-          }`}>
-            <span className={`w-2.5 h-2.5 rounded-full shadow-sm ${
-              backendOnline === null ? 'bg-gray-400' : 
-              backendOnline ? 'bg-green-500 shadow-green-500/50' : 'bg-red-500 shadow-red-500/50'
-            }`} />
-            {backendOnline === null ? 'Conectando...' : backendOnline ? 'API Conectada' : 'API Desconectada'}
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden md:rounded-[2rem] bg-[#F4F6F8] md:bg-transparent">
-        {/* Mobile Topbar */}
-        <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-center md:hidden z-10 shrink-0 shadow-sm">
-          <div className="font-black text-lg text-gray-900 flex items-center gap-2">
-            <Globe size={18} className="text-emerald-600" />
-            Sistema Difuso G8
+          <div className="ml-auto flex items-center gap-3 md:ml-4">
+            <span className="flex items-center gap-2 rounded-full border border-line bg-white px-3.5 py-2 text-xs font-medium">
+              <span className={`h-2 w-2 rounded-full ${status.dot}`} />
+              {status.text}
+            </span>
+            <span className="hidden text-xs leading-tight text-muted xl:block">
+              <strong className="block text-sm font-medium text-ink">Mamdani v{model?.version ?? '1.1.0'}</strong>
+              {model?.total_reglas ?? 192} reglas
+            </span>
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-4 sm:p-6 md:p-0 md:pr-2 custom-scrollbar">
+        <main>
           <Outlet />
         </main>
       </div>
-
-      {/* Mobile Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around p-3 pb-safe z-50 shadow-[0_-4px_24px_rgba(0,0,0,0.05)]">
-        {navItems.map(({ to, label, Icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) =>
-              `flex flex-col items-center gap-1 p-2 rounded-xl text-xs font-bold transition-colors ${
-                isActive ? 'text-emerald-600' : 'text-gray-500'
-              }`
-            }
-          >
-            <Icon size={20} />
-            <span>{label}</span>
-          </NavLink>
-        ))}
-      </nav>
     </div>
   )
 }
