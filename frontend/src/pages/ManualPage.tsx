@@ -99,11 +99,11 @@ export function ManualPage() {
           </div>
 
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight max-w-4xl mb-4 leading-tight">
-            Simulador <span className="text-amber-400">Manual</span>
+            Preparación Preventiva ante <span className="text-amber-400">Incendios Forestales</span>
           </h1>
 
           <p className="text-base md:text-lg text-teal-100/80 font-medium max-w-3xl mb-6 leading-relaxed">
-            Modo interactivo para simular el riesgo. Ajusta cada variable climática para entender cómo reacciona el Sistema de Inferencia Difusa Mamdani frente a distintos escenarios ficticios o supuestos.
+            Diagnóstico preliminar y modelado de riesgo utilizando lógica difusa Mamdani ajustado específicamente a las condiciones meteorológicas y el ecosistema de la región Amazonas.
           </p>
 
           <div className="flex flex-wrap justify-center items-center gap-3 px-5 py-2.5 rounded-full bg-black/40 border border-white/10 backdrop-blur-md text-sm font-medium text-gray-200">
@@ -128,7 +128,7 @@ export function ManualPage() {
         <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
           <div className="mb-8 text-center">
             <h2 className="text-2xl font-black text-gray-900">Configuración de variables</h2>
-            <p className="text-sm text-gray-500 mt-2">Desliza los valores de las entradas crisp para simular el nivel de riesgo.</p>
+            <p className="text-sm text-gray-500 mt-2">Ajusta los parámetros meteorológicos de entrada para evaluar el nivel de riesgo.</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

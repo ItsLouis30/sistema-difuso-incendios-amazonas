@@ -12,8 +12,8 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { useAppContext } from '../../app/AppContext'
 
 const navItems = [
-  { to: '/manual', label: 'Modo Manual', Icon: SlidersHorizontal },
-  { to: '/historico', label: 'Modo Histórico', Icon: CalendarDays },
+  { to: '/manual', label: 'Evaluación Manual', Icon: SlidersHorizontal },
+  { to: '/historico', label: 'Evaluación Histórica', Icon: CalendarDays },
   { to: '/historial', label: 'Tendencias', Icon: ChartNoAxesCombined },
   { to: '/metodologia', label: 'Metodología', Icon: BookOpenText },
 ]
