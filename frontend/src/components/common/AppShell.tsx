@@ -22,7 +22,7 @@ export function AppShell() {
   const { backendOnline } = useAppContext()
   
   return (
-    <div className="flex h-screen bg-[#F4F6F8] font-sans text-gray-800 overflow-hidden md:p-4 lg:p-6 gap-6">
+    <div className="flex h-screen bg-gray-100 font-sans text-gray-800 overflow-hidden md:p-4 lg:p-6 gap-6">
       {/* Sidebar - Capsule Style */}
       <aside className="w-72 bg-white rounded-[2rem] flex flex-col shadow-xl shadow-gray-200/50 z-10 hidden md:flex h-full overflow-hidden border border-gray-100/50 shrink-0">
         <div className="flex items-center justify-between px-6 py-8">
@@ -71,7 +71,7 @@ export function AppShell() {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden md:rounded-[2rem] bg-[#F4F6F8] md:bg-transparent">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden md:rounded-[2rem] bg-gray-100 md:bg-transparent">
         {/* Mobile Topbar */}
         <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-center md:hidden z-10 shrink-0 shadow-sm">
           <div className="font-black text-lg text-gray-900 flex items-center gap-2">
