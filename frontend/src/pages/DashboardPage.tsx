@@ -21,16 +21,16 @@ export function DashboardPage() {
   const [result, setResult] = useState<InferenceResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  
+  const [calculating, setCalculating] = useState(false)
+  const [calculationStep, setCalculationStep] = useState(7)
+  const [hasCalculated, setHasCalculated] = useState(false)
 
   const executeManual = useCallback(async (payload: InferenceRequest) => {
-    setLoading(true)
-    setError(null)
     try {
       setResult(await api.manualInference(payload))
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'No se pudo ejecutar la inferencia.')
-    } finally {
-      setLoading(false)
+      console.error(caught)
     }
   }, [])
 
@@ -62,10 +62,28 @@ export function DashboardPage() {
     }
     setLoading(true)
     setError(null)
+    setCalculating(true)
+    setCalculationStep(0)
+    setHasCalculated(false)
+    
     try {
-      setResult(mode === 'manual' ? await api.manualInference(inputs) : await api.historicalInference(selectedDate))
+      const res = mode === 'manual' ? await api.manualInference(inputs) : await api.historicalInference(selectedDate)
+      setResult(res)
+      
+      let step = 0
+      const interval = setInterval(() => {
+        step++
+        setCalculationStep(step)
+        if (step >= 7) {
+          clearInterval(interval)
+          setCalculating(false)
+          setHasCalculated(true)
+        }
+      }, 500)
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'No se pudo ejecutar la inferencia.')
+      setCalculating(false)
+      setCalculationStep(7)
     } finally {
       setLoading(false)
     }
@@ -75,27 +93,9 @@ export function DashboardPage() {
     setMode(nextMode)
     setResult(null)
     setError(null)
-  }
-
-  const getCategoryColor = (category: string) => {
-    switch(category?.toLowerCase()) {
-      case 'muy bajo': return 'text-green-500 bg-green-50';
-      case 'bajo': return 'text-teal-500 bg-teal-50';
-      case 'moderado': return 'text-yellow-500 bg-yellow-50';
-      case 'alto': return 'text-emerald-600 bg-emerald-50';
-      case 'muy alto': return 'text-red-500 bg-red-50';
-      default: return 'text-gray-500 bg-gray-50';
-    }
-  }
-
-  const getCategoryIcon = (category: string) => {
-    switch(category?.toLowerCase()) {
-      case 'muy bajo': return <CheckCircle2 size={24} />;
-      case 'bajo': return <ShieldAlert size={24} />;
-      case 'moderado': return <AlertCircle size={24} />;
-      case 'alto': return <AlertTriangle size={24} />;
-      case 'muy alto': return <AlertTriangle size={24} />;
-      default: return <Info size={24} />;
+    setHasCalculated(false)
+    if (nextMode === 'manual') {
+      void executeManual(inputs)
     }
   }
 
@@ -159,90 +159,94 @@ export function DashboardPage() {
 
       {bootError && <ErrorState message={bootError} />}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
-        <div className="lg:col-span-7 space-y-6">
-          <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-            <div className="mb-6">
-              <h2 className="text-lg font-bold text-gray-900">{mode === 'manual' ? 'Configuración de variables' : 'Selección de fecha'}</h2>
-              <p className="text-sm text-gray-500 mt-1">{mode === 'manual' ? 'Ajusta los valores de las entradas crisp.' : 'Recupera datos meteorológicos históricos.'}</p>
-            </div>
-
-            {mode === 'historical' && (
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gray-50 rounded-xl mb-6 border border-gray-100">
-                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm">
-                  <CalendarDays size={20} />
-                </div>
-                <div className="flex-1">
-                  <label htmlFor="historical-date" className="block text-sm font-bold text-gray-700">Fecha de consulta</label>
-                  <span className="text-xs text-gray-500">Disp: {historyRange ? `${formatDate(historyRange.fecha_inicial)} - ${formatDate(historyRange.fecha_final)}` : '2000-2025'}</span>
-                </div>
-                <input 
-                  id="historical-date" 
-                  type="date" 
-                  className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white font-medium text-gray-800"
-                  value={selectedDate} 
-                  min={historyRange?.fecha_inicial ?? '2000-01-01'} 
-                  max={historyRange?.fecha_final ?? '2025-12-31'} 
-                  onChange={(event) => setSelectedDate(event.target.value)} 
-                />
-              </div>
-            )}
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {VARIABLES.map((variable) => (
-                <VariableControl
-                  key={variable.key}
-                  info={variable}
-                  value={visibleInputs[variable.key]}
-                  onChange={(value) => updateInput(variable.key, value)}
-                  memberships={result?.pertenencias_entrada[variable.key]}
-                  readOnly={mode === 'historical'}
-                />
-              ))}
-            </div>
-
-            {error && <div className="mt-6"><ErrorState message={error} /></div>}
-            {loading && <div className="mt-6"><LoadingState message={mode === 'manual' ? 'Evaluando...' : 'Recuperando fecha...'} /></div>}
-
-            <div className="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-gray-100">
-              {mode === 'manual' && (
-                <button 
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium text-gray-600 bg-gray-50 hover:bg-gray-100 transition-colors"
-                  type="button" 
-                  onClick={() => { setInputs(DEFAULT_INPUTS); setResult(null) }}
-                >
-                  <RotateCcw size={18} /> Restablecer
-                </button>
-              )}
-              <button 
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-lg shadow-emerald-600/30 transition-all disabled:opacity-50"
-                type="button" 
-                onClick={() => void submit()} 
-                disabled={loading}
-              >
-                <Play size={18} fill="currentColor" /> 
-                {mode === 'manual' ? 'Calcular Nivel' : 'Evaluar Fecha'}
-              </button>
-            </div>
+      <div className="max-w-4xl mx-auto space-y-8 mt-8">
+        <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
+          <div className="mb-8 text-center">
+            <h2 className="text-2xl font-black text-gray-900">{mode === 'manual' ? 'Configuración de variables' : 'Selección de fecha'}</h2>
+            <p className="text-sm text-gray-500 mt-2">{mode === 'manual' ? 'Ajusta los valores de las entradas crisp para simular el riesgo.' : 'Recupera datos meteorológicos históricos.'}</p>
           </div>
-          
-          {result && (
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Pipeline de Inferencia</h2>
-              <InferencePipeline active={Boolean(result)} />
+
+          {mode === 'historical' && (
+            <div className="flex flex-col sm:flex-row sm:items-center justify-center gap-4 p-5 bg-gray-50 rounded-xl mb-8 border border-gray-100 max-w-xl mx-auto">
+              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm shrink-0">
+                <CalendarDays size={24} />
+              </div>
+              <div className="flex-1">
+                <label htmlFor="historical-date" className="block text-sm font-bold text-gray-700">Fecha de consulta</label>
+                <span className="text-xs text-gray-500">Disp: {historyRange ? `${formatDate(historyRange.fecha_inicial)} - ${formatDate(historyRange.fecha_final)}` : '2000-2025'}</span>
+              </div>
+              <input 
+                id="historical-date" 
+                type="date" 
+                className="px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white font-medium text-gray-800"
+                value={selectedDate} 
+                min={historyRange?.fecha_inicial ?? '2000-01-01'} 
+                max={historyRange?.fecha_final ?? '2025-12-31'} 
+                onChange={(event) => setSelectedDate(event.target.value)} 
+                disabled={calculating}
+              />
             </div>
           )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {VARIABLES.map((variable) => (
+              <VariableControl
+                key={variable.key}
+                info={variable}
+                value={visibleInputs[variable.key]}
+                onChange={(value) => updateInput(variable.key, value)}
+                memberships={result?.pertenencias_entrada[variable.key]}
+                readOnly={mode === 'historical' || calculating}
+              />
+            ))}
+          </div>
+
+          {error && <div className="mt-8"><ErrorState message={error} /></div>}
+
+          <div className="flex flex-col items-center justify-center gap-4 mt-10 pt-8 border-t border-gray-100">
+            {mode === 'manual' && (
+              <button 
+                className="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors"
+                type="button" 
+                onClick={() => { setInputs(DEFAULT_INPUTS); setHasCalculated(false); void executeManual(DEFAULT_INPUTS); }}
+                disabled={calculating}
+              >
+                Restablecer valores por defecto
+              </button>
+            )}
+            <button 
+              className="flex items-center justify-center gap-2 px-8 py-4 w-full md:w-auto md:min-w-[300px] rounded-2xl font-black text-lg text-white bg-emerald-600 hover:bg-emerald-700 shadow-xl shadow-emerald-600/30 transition-all disabled:opacity-50"
+              type="button" 
+              onClick={() => void submit()} 
+              disabled={loading || calculating}
+            >
+              <Play size={20} fill="currentColor" /> 
+              {calculating ? 'Evaluando...' : mode === 'manual' ? 'Calcular Nivel' : 'Evaluar Fecha'}
+            </button>
+          </div>
         </div>
 
-        <div className="lg:col-span-5 space-y-6">
-          {result ? <ResultPanel result={result} /> : <ResultPlaceholder />}
-          
-          {result && (
-            <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
+        {calculating && (
+          <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h2 className="text-sm font-bold text-gray-400 mb-6 uppercase tracking-widest text-center">Ejecutando Motor de Inferencia</h2>
+            <InferencePipeline currentStep={calculationStep} isComplete={false} />
+          </div>
+        )}
+
+        {!calculating && hasCalculated && result && (
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm flex flex-col items-center justify-center">
+              <h2 className="text-sm font-bold text-emerald-600 mb-6 uppercase tracking-widest text-center">Pipeline Completado</h2>
+              <InferencePipeline currentStep={7} isComplete={true} />
+            </div>
+
+            <ResultPanel result={result} />
+            
+            <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
                <Explainability result={result} />
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   )
