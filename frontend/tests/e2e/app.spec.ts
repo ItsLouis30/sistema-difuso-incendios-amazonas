@@ -21,6 +21,9 @@ test('ejecuta una inferencia manual completa desde la interfaz', async ({ page }
   await expect(resultCard(page).getByText('¿Qué significa?')).toBeVisible()
   await expect(page.getByText('¿Por qué Muy alto?')).toBeVisible()
   await expect(page.getByText('Precipitación diaria menor a 1 mm.', { exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Pertenencia del índice final' })).toBeVisible()
+  await expect(page.getByText('Centroide = 91.67')).toBeVisible()
+  await expect(page.getByText('Rango del modelo: 0–6 m/s', { exact: false }).first()).toBeVisible()
 })
 
 test('restablecer elimina el resultado anterior', async ({ page }) => {

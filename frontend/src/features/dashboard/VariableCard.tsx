@@ -50,6 +50,9 @@ export function VariableCard({ info, value, memberships, onChange, readOnly = fa
           )}
           <span className="text-sm text-muted">{info.unit}</span>
         </div>
+        <p className="mt-1 text-[11px] text-muted">
+          Valor ingresado · Rango del modelo: {formatNumber(info.minimum, decimals)}–{formatNumber(info.maximum, decimals)} {info.unit}
+        </p>
         <p className="mt-2 text-xs leading-relaxed text-muted" title={info.influence}>
           {info.explanation} {info.influence}
         </p>
@@ -74,10 +77,13 @@ export function VariableCard({ info, value, memberships, onChange, readOnly = fa
       )}
 
       <div className="mt-auto flex flex-wrap gap-1.5 border-t border-[#efecea] pt-3">
+        <span className="mb-0.5 w-full text-[10px] font-semibold uppercase tracking-[0.08em] text-muted">
+          Pertenencias activas
+        </span>
         {terms.length ? (
           terms.map(([term, degree]) => (
             <span key={term} className="flex items-center gap-1.5 rounded-full bg-shell px-2.5 py-1 text-xs">
-              {TERM_LABELS[term] ?? term} <strong className="font-semibold tabular-nums">{degree.toFixed(2)}</strong>
+              {TERM_LABELS[term] ?? term} <strong className="font-semibold tabular-nums">μ {degree.toFixed(2)}</strong>
             </span>
           ))
         ) : (

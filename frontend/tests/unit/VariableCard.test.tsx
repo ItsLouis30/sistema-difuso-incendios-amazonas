@@ -16,8 +16,10 @@ describe('VariableCard', () => {
 
     expect(screen.getByText('Humedad relativa mínima')).toBeInTheDocument()
     expect(screen.getByText(/La menor humedad del aire/)).toBeInTheDocument()
+    expect(screen.getByText('Valor ingresado · Rango del modelo: 0–100 %')).toBeInTheDocument()
+    expect(screen.getByText('Pertenencias activas')).toBeInTheDocument()
     expect(screen.getAllByText(/Baja/)).toHaveLength(2)
-    expect(screen.getByText('0.75')).toBeInTheDocument()
+    expect(screen.getByText('μ 0.75')).toBeInTheDocument()
   })
 
   it('reports changes from the slider', () => {

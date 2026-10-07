@@ -24,15 +24,6 @@ function label(term: string) {
   return TERM_LABELS[term] ?? term
 }
 
-/** Mezcla un color semántico con el fondo según el grado de pertenencia (0..1). */
-function membershipShade(hex: string, t: number) {
-  const from = [251, 243, 239]
-  const normalized = hex.replace('#', '')
-  const to = [0, 2, 4].map((offset) => Number.parseInt(normalized.slice(offset, offset + 2), 16))
-  const mix = from.map((channel, index) => Math.round(channel + (to[index] - channel) * t))
-  return `rgb(${mix.join(',')})`
-}
-
 export function ruleText(rule: ActiveRule) {
   const parts = VARIABLES.map((variable) => {
     const phrase = RULE_PHRASES[variable.key]
@@ -193,42 +184,39 @@ export function ResultExplanationCard({ result, totalRules }: { result: Inferenc
 }
 
 export function OutputMembershipCard({ result }: { result: InferenceResponse }) {
-  const radii = [116, 94, 72, 50, 28]
   const selected = result.resultado.codigo_categoria
   return (
-    <Card className="flex flex-col gap-3 p-6!">
-      <CardTitle title="Pertenencia de salida" caption="Del anillo exterior (muy bajo) al centro (muy alto)" />
-      <svg viewBox="0 0 260 240" className="mx-auto w-full max-w-[300px]" role="img" aria-label="Grado de pertenencia por categoría de salida">
-        {CATEGORY_ORDER.map((code, index) => {
-          const r = radii[index]
-          const cy = 238 - r
+    <Card className="flex flex-col gap-4 p-6!">
+      <CardTitle
+        title="Pertenencia del índice final"
+        caption="Grado μ del centroide respecto a cada categoría de salida"
+      />
+      <div className="flex flex-1 flex-col justify-center gap-3" role="img" aria-label="Grado de pertenencia del índice final por categoría">
+        {CATEGORY_ORDER.map((code) => {
           const mu = result.pertenencias_salida[code] ?? 0
           const isSelected = code === selected
-          const innermost = index === radii.length - 1
           return (
-            <g key={code}>
-              <circle
-                cx="130"
-                cy={cy}
-                r={r}
-                fill={membershipShade(CATEGORY_META[code].color, mu)}
-                stroke={isSelected ? 'var(--color-ink)' : '#fff'}
-                strokeWidth={2}
-              />
-              <text
-                x="130"
-                y={innermost ? cy + 4 : cy - r + 15}
-                textAnchor="middle"
-                fontSize={isSelected ? 12 : 11}
-                fontWeight={isSelected ? 600 : 400}
-                fill={mu > 0.55 ? '#fff' : mu > 0 ? 'var(--color-ink)' : 'var(--color-muted)'}
-              >
-                {innermost ? mu.toFixed(2) : `${CATEGORY_META[code].label} ${mu.toFixed(2)}`}
-              </text>
-            </g>
+            <div key={code} className={`rounded-2xl px-3 py-2.5 ${isSelected ? 'bg-shell' : ''}`}>
+              <div className="mb-2 flex items-center justify-between gap-3 text-xs">
+                <span className={`flex items-center gap-2 ${isSelected ? 'font-semibold text-ink' : 'text-muted'}`}>
+                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: CATEGORY_META[code].color }} />
+                  {CATEGORY_META[code].label}
+                </span>
+                <strong className="font-mono font-semibold tabular-nums text-ink">μ {mu.toFixed(2)}</strong>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-[#edeae7]">
+                <div
+                  className="h-full rounded-full transition-[width] duration-700"
+                  style={{ width: `${Math.max(0, Math.min(100, mu * 100))}%`, backgroundColor: CATEGORY_META[code].color }}
+                />
+              </div>
+            </div>
           )
         })}
-      </svg>
+      </div>
+      <p className="text-xs leading-relaxed text-muted">
+        La categoría mostrada corresponde al mayor grado de pertenencia del índice crisp.
+      </p>
     </Card>
   )
 }
@@ -248,6 +236,20 @@ export function AggregatedCurveCard({ result }: { result: InferenceResponse }) {
       <div className="h-52 min-h-0 flex-1">
         <OutputCurveChart data={result.curva_salida} centroid={result.resultado.indice} />
       </div>
+      <dl className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+        <div className="rounded-2xl bg-shell px-3 py-2.5">
+          <dt className="text-[10px] font-semibold uppercase tracking-[0.07em] text-muted">Agregación</dt>
+          <dd className="mt-0.5 text-xs font-medium">Máximo de salidas recortadas</dd>
+        </div>
+        <div className="rounded-2xl bg-shell px-3 py-2.5">
+          <dt className="text-[10px] font-semibold uppercase tracking-[0.07em] text-muted">Defuzzificación</dt>
+          <dd className="mt-0.5 text-xs font-medium">Centroide</dd>
+        </div>
+        <div className="rounded-2xl bg-ink px-3 py-2.5 text-white">
+          <dt className="text-[10px] font-semibold uppercase tracking-[0.07em] text-[#aaa6a1]">Resultado</dt>
+          <dd className="mt-0.5 text-xs font-semibold tabular-nums">{formatNumber(result.resultado.indice, 2)}</dd>
+        </div>
+      </dl>
       <div className="flex flex-wrap gap-2">
         {clippedConsequents(result).map(({ code, mu }) => (
           <span key={code} className="rounded-full bg-shell px-3 py-1.5 text-xs">
@@ -331,12 +333,14 @@ export function RulesCard({ result, totalRules }: { result: InferenceResponse; t
                   <div className="h-1 rounded-full bg-ink" style={{ width: `${rule.activacion * 100}%` }} />
                 </div>
               </div>
-              <div className="shrink-0 text-right">
-                <span className="flex items-center justify-end gap-1.5 text-[13px] font-medium">
+              <div className="w-[116px] shrink-0 border-l border-line pl-3 text-left">
+                <span className="block text-[9px] font-semibold uppercase tracking-[0.08em] text-muted">Consecuente</span>
+                <span className="mt-0.5 flex items-center gap-1.5 text-[13px] font-medium">
                   <span className="h-2 w-2 rounded-full" style={{ background: CATEGORY_META[rule.consecuente].color }} />
                   {label(rule.consecuente)}
                 </span>
-                <span className="text-xs text-muted">μ {rule.activacion.toFixed(2)}</span>
+                <span className="mt-2 block text-[9px] font-semibold uppercase tracking-[0.08em] text-muted">Activación</span>
+                <span className="mt-0.5 block text-xs font-medium tabular-nums">μ = {rule.activacion.toFixed(2)}</span>
               </div>
             </li>
           )
@@ -358,7 +362,11 @@ export function InferenceStepsCard({ result, totalRules }: { result: InferenceRe
     { title: 'Evaluación de reglas', text: `${result.reglas_activas.length} de ${totalRules} reglas se activan (operador mínimo).` },
     { title: 'Implicación', text: 'Cada consecuente se recorta a la activación de su regla.' },
     { title: 'Agregación', text: 'Las figuras recortadas se unen con el máximo.' },
-    { title: 'Centroide', text: `El centro de gravedad de la figura es ${formatNumber(result.resultado.indice, 2)}.`, accent: true },
+    {
+      title: `Centroide = ${formatNumber(result.resultado.indice, 2)}`,
+      text: 'El centro de gravedad de la función agregada determina el índice final.',
+      accent: true,
+    },
     {
       title: 'Categoría',
       text: `Mayor pertenencia: ${result.resultado.categoria} (${(result.pertenencias_salida[code] ?? 0).toFixed(2)}).`,
@@ -369,7 +377,7 @@ export function InferenceStepsCard({ result, totalRules }: { result: InferenceRe
     <Card className="flex flex-col gap-3.5 p-6!">
       <CardTitle
         title={`Cómo se llegó al ${formatNumber(result.resultado.indice, 1)}`}
-        caption="Mamdani: mínimo · mínimo · máximo · centroide"
+        caption="AND: mínimo · Implicación: mínimo · Agregación: máximo · Defuzzificación: centroide"
       />
       <ol className="flex flex-col">
         {steps.map((step, index) => (
