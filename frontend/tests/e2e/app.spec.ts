@@ -4,6 +4,8 @@ import { resultCard, runManualInference, setManualInputs } from './helpers'
 test('ejecuta una inferencia manual completa desde la interfaz', async ({ page }) => {
   await page.goto('/manual')
   await expect(page.getByText('API conectada')).toBeVisible()
+  await expect(resultCard(page)).toHaveCount(0)
+  await expect(page.getByText('Ejecuta una evaluación para ver el índice, sus reglas y la explicación.')).toBeVisible()
 
   const response = await runManualInference(page, {
     hr_min_pct: 30,
@@ -17,6 +19,21 @@ test('ejecuta una inferencia manual completa desde la interfaz', async ({ page }
   await expect(resultCard(page).getByText('Muy alto', { exact: true }).first()).toBeVisible()
   await expect(resultCard(page).getByText('¿Qué significa?')).toBeVisible()
   await expect(page.getByText('¿Por qué Muy alto?')).toBeVisible()
+})
+
+test('restablecer elimina el resultado anterior', async ({ page }) => {
+  await page.goto('/manual')
+  await runManualInference(page, {
+    hr_min_pct: 85,
+    dias_secos: 0,
+    viento_max_ms: 1.5,
+    humedad_suelo_superficial_m3m3: 0.354,
+  })
+  await expect(resultCard(page)).toBeVisible()
+
+  await page.getByRole('button', { name: 'Restablecer valores por defecto' }).click()
+  await expect(resultCard(page)).toHaveCount(0)
+  await expect(page.getByText('Ejecuta una evaluación para ver el índice, sus reglas y la explicación.')).toBeVisible()
 })
 
 test('consulta una fecha histórica y conserva su trazabilidad', async ({ page }) => {

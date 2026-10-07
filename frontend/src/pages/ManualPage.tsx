@@ -1,5 +1,5 @@
 import { ArrowRight, MapPin, RotateCcw } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { DEFAULT_INPUTS, VARIABLES, type InputKey } from '../app/constants'
 import { useAppContext } from '../app/AppContext'
 import { DateBadge, HeroBand } from '../components/common/Bento'
@@ -22,10 +22,6 @@ export function ManualPage() {
   const [error, setError] = useState<string | null>(null)
   const { pipeline, start, play, reset } = usePipelineAnimation()
   const running = pipeline?.running ?? false
-
-  useEffect(() => {
-    api.manualInference(DEFAULT_INPUTS).then(setResult).catch(() => undefined)
-  }, [])
 
   function updateInput(key: InputKey, value: number) {
     setInputs((current) => ({ ...current, [key]: value }))
@@ -59,7 +55,7 @@ export function ManualPage() {
     reset()
     setError(null)
     setInputs(DEFAULT_INPUTS)
-    api.manualInference(DEFAULT_INPUTS).then(setResult).catch(() => undefined)
+    setResult(null)
   }
 
   return (
