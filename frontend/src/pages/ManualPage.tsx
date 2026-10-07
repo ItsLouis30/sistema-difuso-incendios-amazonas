@@ -5,6 +5,7 @@ import { useAppContext } from '../app/AppContext'
 import { Pill } from '../components/common/Bento'
 import { ErrorState } from '../components/common/Feedback'
 import { InferenceDashboard } from '../features/dashboard/InferenceDashboard'
+import { PipelineStrip } from '../features/dashboard/ResultCards'
 import { usePipelineAnimation } from '../features/dashboard/usePipelineAnimation'
 import { api } from '../services/api/client'
 import type { InferenceRequest, InferenceResponse } from '../types/api'
@@ -95,6 +96,12 @@ export function ManualPage() {
           </span>
         </div>
       </section>
+
+      {pipeline && (
+        <div className="px-4 pt-4 md:px-6">
+          <PipelineStrip step={pipeline.step} done={!pipeline.running} />
+        </div>
+      )}
 
       {(bootError || error) && (
         <div className="space-y-2 px-4 pt-4 md:px-6">

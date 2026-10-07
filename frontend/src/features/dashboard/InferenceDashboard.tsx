@@ -7,7 +7,6 @@ import {
   EmptyResultCard,
   InferenceStepsCard,
   OutputMembershipCard,
-  PipelineStrip,
   ResultExplanationCard,
   ResultHeroCard,
   RulesCard,
@@ -51,8 +50,6 @@ export function InferenceDashboard({ inputs, result, onInputChange, pipeline }: 
       </div>
 
       {ready && result && <ResultExplanationCard result={result} totalRules={totalRules} />}
-
-      {pipeline && <PipelineStrip step={pipeline.step} done={!pipeline.running} />}
 
       {!ready || !result ? (
         <EmptyResultCard
