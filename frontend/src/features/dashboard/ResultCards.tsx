@@ -1,7 +1,7 @@
-import { Check, Clock3, LoaderCircle, Search } from 'lucide-react'
+import { Check, Clock3, Info, LoaderCircle, Search, ShieldCheck, Sparkles } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CATEGORY_META, PIPELINE, TERM_LABELS, VARIABLES } from '../../app/constants'
+import { CATEGORY_MEANINGS, CATEGORY_META, PIPELINE, TERM_LABELS, VARIABLES } from '../../app/constants'
 import { formatNumber } from '../../app/format'
 import { Card, CardTitle, IconCircle } from '../../components/common/Bento'
 import { OutputCurveChart } from '../../components/charts/OutputCurveChart'
@@ -44,6 +44,24 @@ export function ruleText(rule: ActiveRule) {
 
 function sortedRules(result: InferenceResponse) {
   return [...result.reglas_activas].sort((a, b) => b.activacion - a.activacion || a.numero - b.numero)
+}
+
+export function explanationDetails(result: InferenceResponse) {
+  const factors = VARIABLES.map((variable) => {
+    const memberships = Object.entries(result.pertenencias_entrada[variable.key] ?? {})
+    const [term = 'sin_dato', degree = 0] = memberships.reduce<[string, number]>(
+      (dominant, current) => (current[1] > dominant[1] ? current : dominant),
+      ['sin_dato', -1],
+    )
+    return {
+      key: variable.key,
+      variable: variable.shortLabel,
+      term,
+      label: label(term),
+      degree: Math.max(0, degree),
+    }
+  })
+  return { factors, dominantRule: sortedRules(result)[0] }
 }
 
 /** Activación con la que quedó recortado cada consecuente (máximo de sus reglas). */
@@ -96,17 +114,60 @@ export function ResultHeroCard({ result }: { result: InferenceResponse }) {
         </div>
       </div>
 
-      <div className="flex items-start gap-3.5 rounded-[22px] bg-[#232120] p-4">
+      <div className="mt-auto flex items-start gap-3.5 rounded-[22px] bg-[#232120] p-4">
         <Sunburst />
         <div className="min-w-0">
           <span className="text-xs text-[#bdb8b3]">Acción recomendada</span>
           <p className="mt-1 break-words text-[17px] font-medium leading-snug">{result.resultado.recomendacion}</p>
         </div>
       </div>
-      <p className="mt-auto text-xs leading-relaxed text-[#bdb8b3]">
-        Orientación de preparación basada en condiciones meteorológicas; no predice la ocurrencia de un incendio.
-      </p>
     </article>
+  )
+}
+
+export function ResultExplanationCard({ result }: { result: InferenceResponse }) {
+  const code = result.resultado.codigo_categoria
+  const { factors, dominantRule } = explanationDetails(result)
+
+  return (
+    <Card className="overflow-hidden p-0!">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.35fr_1fr]">
+        <section className="p-5 sm:p-6">
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <Info size={17} className="text-ember-500" /> ¿Qué significa?
+          </div>
+          <p className="mt-3 text-[13px] leading-relaxed text-muted">{CATEGORY_MEANINGS[code]}</p>
+        </section>
+
+        <section className="border-y border-line p-5 sm:p-6 lg:border-x lg:border-y-0">
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <Sparkles size={17} className="text-ember-500" /> ¿Por qué {result.resultado.categoria}?
+          </div>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {factors.map((factor) => (
+              <span key={factor.key} className="rounded-full bg-shell px-2.5 py-1 text-xs">
+                {factor.variable}: <strong>{factor.label}</strong> · μ {factor.degree.toFixed(2)}
+              </span>
+            ))}
+          </div>
+          {dominantRule && (
+            <p className="mt-3 text-[13px] leading-relaxed text-muted">
+              Estas pertenencias activaron {result.reglas_activas.length} reglas. La de mayor activación fue R{dominantRule.numero}:{' '}
+              {ruleText(dominantRule).replace(/^SI /, '').toLowerCase()} → {label(dominantRule.consecuente)}, con μ {dominantRule.activacion.toFixed(2)}.
+            </p>
+          )}
+        </section>
+
+        <section className="p-5 sm:p-6">
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <ShieldCheck size={17} className="text-ember-500" /> Alcance del resultado
+          </div>
+          <p className="mt-3 text-[13px] leading-relaxed text-muted">
+            Esta evaluación se basa en reglas difusas. No constituye una alerta oficial ni predice la ocurrencia de un incendio forestal.
+          </p>
+        </section>
+      </div>
+    </Card>
   )
 }
 

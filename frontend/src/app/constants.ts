@@ -85,6 +85,19 @@ export const CATEGORY_META: Record<
   muy_alto: { label: 'Muy alto', color: '#dc2626', className: 'level-very-high' },
 }
 
+export const CATEGORY_MEANINGS: Record<CategoryCode, string> = {
+  muy_bajo:
+    'La combinación evaluada presenta señales mínimas de preparación preventiva. Corresponde mantener la observación rutinaria de las condiciones.',
+  bajo:
+    'La combinación evaluada presenta señales limitadas de preparación preventiva. Conviene mantener vigilancia básica y revisar cambios relevantes.',
+  moderado:
+    'La combinación evaluada presenta señales intermedias de preparación preventiva. Conviene reforzar la vigilancia y tener recursos disponibles si las condiciones empeoran.',
+  alto:
+    'La combinación evaluada presenta señales marcadas de preparación preventiva. Se requiere vigilancia reforzada y mayor disponibilidad de recursos.',
+  muy_alto:
+    'La combinación evaluada presenta señales muy marcadas de preparación preventiva. Corresponde sostener el nivel máximo de preparación contemplado por la organización.',
+}
+
 export const TERM_LABELS: Record<string, string> = {
   muy_baja: 'Muy baja',
   baja: 'Baja',
