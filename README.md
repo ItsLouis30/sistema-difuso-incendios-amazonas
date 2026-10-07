@@ -17,8 +17,8 @@ El resultado es un índice continuo de `0–100`, una categoría lingüística y
 
 La planificación funcional y matemática de la versión 1 está cerrada. El núcleo
 Mamdani, la serie histórica, la API y la interfaz web manual e histórica están
-implementados. El trabajo pendiente se concentra en ampliar las pruebas integrales
-y preparar las corridas y evidencias finales de presentación.
+implementados. Las pruebas integrales y las cuatro corridas oficiales también
+están automatizadas y documentadas.
 
 - [x] Configuración versionada del modelo difuso
 - [x] Motor Mamdani y explicación de reglas
@@ -32,8 +32,8 @@ y preparar las corridas y evidencias finales de presentación.
 - [x] Repositorio histórico y casos de uso manual e histórico
 - [x] API REST del backend
 - [x] Interfaz web manual e histórica
-- [ ] Gráficos de pertenencia, inferencia y sensibilidad
-- [ ] Pruebas de integración y corridas demostrativas de extremo a extremo
+- [x] Gráficos de pertenencia, inferencia e historial
+- [x] Pruebas de integración y corridas demostrativas de extremo a extremo
 - [x] Documentación de ejecución
 
 La meta del repositorio es una **implementación completa**, separada en backend y frontend, con un núcleo matemático verificable y una interfaz utilizable.
@@ -232,7 +232,7 @@ indice = integral(y * mu_agregada(y)) / integral(mu_agregada(y))
 
 El backend debe rechazar una inferencia cuando falta una entrada o cuando un valor está fuera del dominio configurado. No debe recortar valores silenciosamente.
 
-## Arquitectura prevista
+## Arquitectura implementada
 
 ```text
 ┌──────────────────────── Frontend ────────────────────────┐
@@ -248,20 +248,20 @@ El backend debe rechazar una inferencia cuando falta una entrada o cuando un val
 └──────────────────────────────────────────────────────────┘
 ```
 
-### Stack recomendado
+### Stack implementado
 
 | Capa | Tecnología |
 |---|---|
-| Backend | Python 3.12, FastAPI, Pydantic, NumPy y pandas |
-| Frontend | React, TypeScript y Vite |
-| Gráficos | Recharts o una librería equivalente mantenida |
-| Pruebas backend | pytest |
-| Pruebas frontend | Vitest y Testing Library |
-| Calidad | Ruff para Python; ESLint y Prettier para TypeScript |
+| Backend | Python 3.12, FastAPI y Pydantic |
+| Frontend | React 19, TypeScript, Vite y Tailwind CSS |
+| Gráficos | Recharts |
+| Pruebas backend | `unittest` y TestClient |
+| Pruebas frontend | Vitest, Testing Library y Playwright |
+| Gestor frontend | pnpm 11 |
 
-El motor difuso debe implementarse como un módulo independiente de FastAPI. La interfaz consume el contrato HTTP y no replica reglas ni funciones de pertenencia.
+El motor difuso está implementado como un módulo independiente de FastAPI. La interfaz consume el contrato HTTP y no replica reglas ni funciones de pertenencia.
 
-### Estructura objetivo
+### Estructura principal
 
 ```text
 .
@@ -289,29 +289,21 @@ El motor difuso debe implementarse como un módulo independiente de FastAPI. La 
 │   │           └── repositories/         # Consulta de la serie histórica
 │   └── tests/
 │       ├── unit/                         # Pruebas por bloque Mamdani
-│       ├── integration/api/              # API + casos de uso
-│       └── fixtures/                     # Escenarios controlados
+│       └── integration/api/              # API + casos de uso
 ├── frontend/
-│   ├── public/
 │   ├── src/
 │   │   ├── app/                          # Inicio, rutas y proveedores
 │   │   ├── pages/                        # Vistas completas
-│   │   ├── features/
-│   │   │   ├── manual_inference/
-│   │   │   ├── historical_inference/
-│   │   │   ├── model_explanation/
-│   │   │   └── sensitivity_analysis/
+│   │   ├── features/dashboard/           # Resultado y explicabilidad
 │   │   ├── components/
 │   │   │   ├── common/
 │   │   │   └── charts/
 │   │   ├── services/api/                 # Cliente del backend
 │   │   ├── types/                        # Contratos TypeScript
-│   │   ├── styles/
-│   │   └── assets/
+│   │   └── styles/
 │   └── tests/
-│       ├── unit/
-│       ├── integration/
-│       └── e2e/
+│       ├── unit/                          # Componentes y utilidades
+│       └── e2e/                           # Playwright + Chrome
 ├── config/fuzzy_model/v1/                # Parámetros y FAM versionados
 ├── data/
 │   ├── raw/                              # Respuestas originales inmutables
@@ -324,11 +316,10 @@ El motor difuso debe implementarse como un módulo independiente de FastAPI. La 
 │   ├── model/                            # Matemática, BRD y corridas
 │   ├── data/                             # Preparación y calidad
 │   ├── api/                              # Contrato HTTP
-│   └── testing/                          # Plan y resultados
+│   └── testing/                          # E2E, corridas y capturas
 ├── scripts/
 │   ├── data/                             # Preparación reproducible
 │   └── quality/                          # Verificaciones automatizadas
-├── deployment/docker/                    # Empaquetado posterior
 └── README.md
 ```
 
@@ -345,9 +336,9 @@ correspondencia detallada entre los cuatro bloques y sus dependencias está en
 | Motor de inferencia | `domain/fuzzy/inference_engine/` | Antecedente mínimo, implicación mínima y agregación máxima |
 | Desborrosificador | `domain/fuzzy/defuzzifier/` | Centro de gravedad o centroide |
 
-Esta separación confirma que el proyecto implementará un sistema **Mamdani**: los consecuentes son conjuntos difusos y existe una etapa explícita de agregación y defusificación. No se utilizarán consecuentes constantes o ecuaciones lineales de tipo Sugeno.
+Esta separación confirma que el proyecto implementa un sistema **Mamdani**: los consecuentes son conjuntos difusos y existe una etapa explícita de agregación y defusificación. No se utilizan consecuentes constantes ni ecuaciones lineales de tipo Sugeno.
 
-## Contrato inicial de la API
+## Contrato de la API
 
 Prefijo sugerido: `/api/v1`.
 
@@ -360,7 +351,7 @@ Prefijo sugerido: `/api/v1`.
 | `GET /api/v1/history/range` | Rango temporal y cobertura disponible |
 | `GET /api/v1/history/{date}` | Variables meteorológicas de una fecha |
 
-Solicitud manual propuesta:
+Solicitud manual:
 
 ```json
 {
@@ -371,41 +362,48 @@ Solicitud manual propuesta:
 }
 ```
 
-Respuesta propuesta:
+Fragmento de respuesta real:
 
 ```json
 {
   "model_version": "1.1.0",
-  "mode": "manual",
-  "inputs": {
+  "modo": "manual",
+  "entradas": {
     "hr_min_pct": 59.0,
     "dias_secos": 3,
     "viento_max_ms": 2.7,
     "humedad_suelo_superficial_m3m3": 0.354
   },
-  "result": {
-    "index": 56.4,
-    "category": "Moderado",
-    "recommendation": "Preparación preventiva"
+  "resultado": {
+    "indice": 50.57,
+    "categoria": "Moderado",
+    "codigo_categoria": "moderado",
+    "recomendacion": "Reforzar monitoreo y preparar recursos para una activacion preventiva."
   },
-  "memberships": {},
-  "active_rules": [],
-  "source": {
-    "type": "manual"
+  "fuente": {
+    "tipo": "manual"
   }
 }
 ```
 
-Los valores del ejemplo describen la forma del contrato; el índice real debe calcularse con el motor implementado.
+La respuesta completa incluye pertenencias de entrada y salida, reglas activadas,
+curva agregada y procedencia. El contrato completo está en
+[`docs/api/README.md`](docs/api/README.md).
 
 Cada error debe utilizar un formato estable:
 
 ```json
 {
   "error": {
-    "code": "INPUT_OUT_OF_DOMAIN",
-    "message": "viento_max_ms debe estar entre 0 y 6 m/s",
-    "field": "viento_max_ms"
+    "code": "VALIDATION_ERROR",
+    "message": "La solicitud contiene datos invalidos.",
+    "details": [
+      {
+        "field": "viento_max_ms",
+        "message": "Input should be less than or equal to 6",
+        "type": "less_than_equal"
+      }
+    ]
   }
 }
 ```
@@ -507,7 +505,18 @@ Ejecutar todas las pruebas:
 python -m unittest discover -s tests -v
 ```
 
-Las instrucciones del frontend se añadirán con su implementación.
+Desde `frontend`:
+
+```powershell
+pnpm install
+pnpm dev
+pnpm test
+pnpm build
+pnpm test:e2e
+```
+
+Las cuatro corridas oficiales se regeneran con `pnpm evidence` y están
+documentadas en [`docs/testing/REFERENCE_RUNS.md`](docs/testing/REFERENCE_RUNS.md).
 
 ## Principios para contribuir
 

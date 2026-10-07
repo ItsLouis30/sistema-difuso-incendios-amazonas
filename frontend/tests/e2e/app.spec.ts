@@ -1,0 +1,66 @@
+import { expect, test } from '@playwright/test'
+import { resultCard, runManualInference, setManualInputs } from './helpers'
+
+test('ejecuta una inferencia manual completa desde la interfaz', async ({ page }) => {
+  await page.goto('/manual')
+  await expect(page.getByText('API conectada')).toBeVisible()
+
+  const response = await runManualInference(page, {
+    hr_min_pct: 30,
+    dias_secos: 8,
+    viento_max_ms: 4.5,
+    humedad_suelo_superficial_m3m3: 0.354,
+  })
+
+  expect(response.resultado).toMatchObject({ indice: 91.67, codigo_categoria: 'muy_alto' })
+  await expect(resultCard(page).getByText('91.7')).toBeVisible()
+  await expect(resultCard(page).getByText('Muy alto', { exact: true }).first()).toBeVisible()
+  await expect(resultCard(page).getByText('¿Qué significa?')).toBeVisible()
+  await expect(page.getByText('¿Por qué Muy alto?')).toBeVisible()
+})
+
+test('consulta una fecha histórica y conserva su trazabilidad', async ({ page }) => {
+  await page.goto('/historico')
+  await page.locator('#historical-date').fill('2000-06-01')
+  const responsePromise = page.waitForResponse('**/api/v1/inferences/history/2000-06-01')
+  await page.getByRole('button', { name: 'Evaluar fecha' }).click()
+  const response = await responsePromise
+  const body = await response.json()
+
+  expect(response.ok()).toBeTruthy()
+  expect(body.modo).toBe('historical')
+  expect(body.fuente).toMatchObject({ fecha: '2000-06-01', dentro_periodo_calibracion: true })
+  await expect(page.getByText('Inferencia completa')).toBeVisible()
+  await expect(page.getByText('weather_inputs_2000_2025.csv')).toBeVisible()
+  await expect(resultCard(page)).toBeVisible()
+})
+
+test('rechaza valores fuera del universo y acepta los límites exactos', async ({ page }) => {
+  await page.goto('/manual')
+  await setManualInputs(page, {
+    hr_min_pct: 30,
+    dias_secos: 8,
+    viento_max_ms: 6.1,
+    humedad_suelo_superficial_m3m3: 0.354,
+  })
+  await page.getByRole('button', { name: 'Calcular nivel preventivo' }).click()
+  await expect(page.getByRole('alert')).toContainText('Viento máximo diario debe estar entre 0 y 6 m/s')
+
+  const boundary = await runManualInference(page, {
+    hr_min_pct: 100,
+    dias_secos: 15,
+    viento_max_ms: 6,
+    humedad_suelo_superficial_m3m3: 1,
+  })
+  expect(boundary.resultado.indice).toBeGreaterThanOrEqual(0)
+  expect(boundary.resultado.indice).toBeLessThanOrEqual(100)
+})
+
+test('informa claramente cuando la API no está disponible', async ({ page }) => {
+  await page.route('**/health', (route) => route.abort())
+  await page.route('**/api/v1/**', (route) => route.abort())
+  await page.goto('/manual')
+
+  await expect(page.getByText('API desconectada')).toBeVisible()
+  await expect(page.getByRole('alert')).toContainText('No pudimos conectar con el backend')
+})

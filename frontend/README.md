@@ -19,10 +19,24 @@ Vite expone el frontend en `http://127.0.0.1:5173` y redirige `/api` y `/health`
 
 ## Comprobaciones
 
-```bash
+```powershell
 pnpm test
 pnpm build
+pnpm test:e2e
 ```
+
+`pnpm test:e2e` inicia temporalmente FastAPI y Vite, abre Chrome y comprueba el
+flujo manual, la consulta histórica, los límites de entrada y el estado de API
+desconectada. Requiere Google Chrome instalado.
+
+Para regenerar las cuatro corridas oficiales y sus capturas:
+
+```powershell
+pnpm evidence
+```
+
+El reporte se guarda en `../docs/testing/REFERENCE_RUNS.md` y las imágenes en
+`../docs/testing/evidence/`.
 
 ## Rutas
 

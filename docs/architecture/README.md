@@ -1,6 +1,6 @@
 # Arquitectura del sistema
 
-Esta carpeta documenta la arquitectura técnica y sus decisiones. La implementación debe mantener separado el **núcleo Mamdani** de la API, el acceso a datos y la interfaz.
+Esta carpeta documenta la arquitectura técnica implementada. El **núcleo Mamdani** permanece separado de la API, el acceso a datos y la interfaz.
 
 ## Flujo funcional
 
@@ -44,10 +44,10 @@ El dominio difuso no debe importar FastAPI, pandas, componentes de interfaz ni d
 
 ```text
 Manual
-HTTP futuro → RunManualInference → MamdaniSystem → InferenceResult
+HTTP POST → RunManualInference → MamdaniSystem → InferenceResult
 
 Histórico
-HTTP futuro → RunHistoricalInference → WeatherHistoryRepository
+HTTP GET → RunHistoricalInference → WeatherHistoryRepository
                                     → MamdaniSystem
                                     → HistoricalInferenceResult
 ```
@@ -61,9 +61,23 @@ mostrar procedencia y valores usados. Las fechas de octubre a mayo se aceptan,
 pero quedan marcadas como interpretación exploratoria porque las funciones se
 calibraron con datos de junio a septiembre.
 
+## Frontend
+
+```text
+React Router → páginas → cliente HTTP → FastAPI
+                         ↓
+             dashboard y explicabilidad
+             gráficas Recharts
+```
+
+Las páginas manual e histórica reutilizan `InferenceDashboard`. El frontend
+recibe funciones, reglas, categorías y resultados desde la API; no contiene una
+segunda implementación del motor. Vitest cubre componentes y utilidades, mientras
+Playwright comprueba el recorrido completo con servicios reales.
+
 ## Mamdani, no Sugeno
 
-Los consecuentes son conjuntos difusos lingüísticos: Muy bajo, Bajo, Moderado, Alto y Muy alto. Cada consecuente se recorta según la fuerza de su regla, se agrega con máximo y luego se desborrosifica mediante centroide. No se implementarán consecuentes constantes o lineales ni media ponderada de tipo Sugeno.
+Los consecuentes son conjuntos difusos lingüísticos: Muy bajo, Bajo, Moderado, Alto y Muy alto. Cada consecuente se recorta según la fuerza de su regla, se agrega con máximo y luego se desborrosifica mediante centroide. No se implementan consecuentes constantes o lineales ni media ponderada de tipo Sugeno.
 
 ## Configuración versionada
 
