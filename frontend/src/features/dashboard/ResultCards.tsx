@@ -114,6 +114,13 @@ export function ResultHeroCard({ result }: { result: InferenceResponse }) {
         </div>
       </div>
 
+      <div className="rounded-[22px] border border-white/10 bg-white/[0.04] p-4">
+        <span className="flex items-center gap-2 text-xs font-medium text-[#d8d3cf]">
+          <Info size={15} className="text-ember-300" /> ¿Qué significa?
+        </span>
+        <p className="mt-2 text-[13px] leading-relaxed text-[#bdb8b3]">{CATEGORY_MEANINGS[code]}</p>
+      </div>
+
       <div className="mt-auto flex items-start gap-3.5 rounded-[22px] bg-[#232120] p-4">
         <Sunburst />
         <div className="min-w-0">
@@ -126,20 +133,12 @@ export function ResultHeroCard({ result }: { result: InferenceResponse }) {
 }
 
 export function ResultExplanationCard({ result }: { result: InferenceResponse }) {
-  const code = result.resultado.codigo_categoria
   const { factors, dominantRule } = explanationDetails(result)
 
   return (
     <Card className="overflow-hidden p-0!">
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.35fr_1fr]">
-        <section className="p-5 sm:p-6">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <Info size={17} className="text-ember-500" /> ¿Qué significa?
-          </div>
-          <p className="mt-3 text-[13px] leading-relaxed text-muted">{CATEGORY_MEANINGS[code]}</p>
-        </section>
-
-        <section className="border-y border-line p-5 sm:p-6 lg:border-x lg:border-y-0">
+      <div className="grid grid-cols-1 lg:grid-cols-[1.45fr_1fr]">
+        <section className="border-b border-line p-5 sm:p-6 lg:border-b-0 lg:border-r">
           <div className="flex items-center gap-2 text-sm font-semibold">
             <Sparkles size={17} className="text-ember-500" /> ¿Por qué {result.resultado.categoria}?
           </div>
