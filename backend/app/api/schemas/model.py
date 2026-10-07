@@ -40,3 +40,16 @@ class ModelResponse(ApiModel):
     salida: LinguisticVariableResponse
     total_reglas: int
     fuente_datos: DataSourceResponse
+
+
+class RuleResponse(ApiModel):
+    numero: int
+    antecedentes: dict[str, str]
+    consecuente: str
+
+
+class RulesResponse(ApiModel):
+    model_id: str
+    model_version: str
+    total_reglas: int
+    reglas: list[RuleResponse]

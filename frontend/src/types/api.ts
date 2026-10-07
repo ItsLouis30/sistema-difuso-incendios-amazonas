@@ -16,6 +16,19 @@ export interface ActiveRule {
   activacion: number
 }
 
+export interface FuzzyRule {
+  numero: number
+  antecedentes: Record<string, string>
+  consecuente: CategoryCode
+}
+
+export interface RulesResponse {
+  model_id: string
+  model_version: string
+  total_reglas: number
+  reglas: FuzzyRule[]
+}
+
 export interface CurvePoint {
   x: number
   pertenencia: number

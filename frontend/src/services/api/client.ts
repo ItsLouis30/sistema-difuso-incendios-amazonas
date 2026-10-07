@@ -5,6 +5,7 @@ import type {
   InferenceRequest,
   InferenceResponse,
   ModelResponse,
+  RulesResponse,
 } from '../../types/api'
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '')
@@ -50,6 +51,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export const api = {
   health: () => request<{ status: string; service: string }>('/health'),
   model: () => request<ModelResponse>('/api/v1/model'),
+  rules: () => request<RulesResponse>('/api/v1/rules'),
   historyRange: () => request<HistoryRange>('/api/v1/history/range'),
   historicalRecord: (date: string) =>
     request<HistoricalRecord>(`/api/v1/history/${date}`),

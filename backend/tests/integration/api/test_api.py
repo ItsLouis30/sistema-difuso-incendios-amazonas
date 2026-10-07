@@ -32,6 +32,30 @@ class ApiContractTests(unittest.TestCase):
         self.assertEqual(len(body["entradas"]), 4)
         self.assertEqual(body["operadores"]["defuzzificacion"], "centroid")
 
+    def test_rules_endpoint_exposes_the_same_complete_knowledge_base(self) -> None:
+        response = self.client.get("/api/v1/rules")
+
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(body["model_version"], "1.1.0")
+        self.assertEqual(body["total_reglas"], 192)
+        self.assertEqual(len(body["reglas"]), 192)
+        self.assertEqual(
+            [rule["numero"] for rule in body["reglas"]], list(range(1, 193))
+        )
+        self.assertEqual(len({
+            tuple(rule["antecedentes"].items()) for rule in body["reglas"]
+        }), 192)
+        self.assertEqual(
+            set(body["reglas"][0]["antecedentes"]),
+            {
+                "humedad_suelo_superficial_m3m3",
+                "viento_max_ms",
+                "hr_min_pct",
+                "dias_secos",
+            },
+        )
+
     def test_history_endpoints_expose_range_and_daily_record(self) -> None:
         range_response = self.client.get("/api/v1/history/range")
         record_response = self.client.get("/api/v1/history/2000-01-01")

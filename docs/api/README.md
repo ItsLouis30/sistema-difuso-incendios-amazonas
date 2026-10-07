@@ -22,12 +22,25 @@ La especificación generada está disponible en `/openapi.json`, Swagger UI en
 |---|---|---|
 | `GET` | `/health` | Estado del servicio |
 | `GET` | `/api/v1/model` | Versión, operadores, universos, etiquetas y fuente |
+| `GET` | `/api/v1/rules` | Base completa de 192 reglas utilizada por el motor |
 | `POST` | `/api/v1/inferences` | Inferencia manual explicable |
 | `GET` | `/api/v1/inferences/history/{fecha}` | Inferencia histórica explicable |
 | `GET` | `/api/v1/history/range` | Rango, frecuencia y cantidad de registros |
 | `GET` | `/api/v1/history/{fecha}` | Registro meteorológico preparado |
 
 Las fechas usan el formato ISO `AAAA-MM-DD`.
+
+## Base de reglas
+
+```http
+GET /api/v1/rules
+```
+
+La respuesta entrega el identificador y la versión del modelo junto con las 192
+reglas ordenadas por número. Cada regla incluye sus cuatro antecedentes y su
+consecuente lingüístico. El endpoint lee la misma instancia inmutable de
+`RuleBase` que evalúa el motor Mamdani; el frontend no mantiene una copia de la
+matriz de conocimiento.
 
 ## Inferencia manual
 

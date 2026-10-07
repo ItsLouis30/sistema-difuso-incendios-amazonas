@@ -1,4 +1,4 @@
-import { BookOpenText, CalendarDays, ChartNoAxesCombined, Flame, SlidersHorizontal } from 'lucide-react'
+import { BookOpenText, CalendarDays, ChartNoAxesCombined, Flame, ListTree, SlidersHorizontal } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAppContext } from '../../app/AppContext'
 
@@ -6,6 +6,7 @@ const navItems = [
   { to: '/manual', label: 'Manual', Icon: SlidersHorizontal },
   { to: '/historico', label: 'Histórico', Icon: CalendarDays },
   { to: '/historial', label: 'Tendencias', Icon: ChartNoAxesCombined },
+  { to: '/reglas', label: 'Reglas', Icon: ListTree },
   { to: '/metodologia', label: 'Metodología', Icon: BookOpenText },
 ]
 

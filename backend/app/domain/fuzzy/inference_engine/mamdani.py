@@ -5,7 +5,7 @@ from math import isfinite
 
 from app.domain.fuzzy.defuzzifier import CentroidDefuzzifier
 from app.domain.fuzzy.membership_functions import trapezoidal_membership
-from app.domain.model import ActiveRule, FuzzyInferenceError, LinguisticVariable
+from app.domain.model import ActiveRule, FuzzyInferenceError, FuzzyRule, LinguisticVariable
 
 from app.domain.fuzzy.rule_base import RuleBase
 
@@ -40,6 +40,11 @@ class MamdaniInferenceEngine:
     @property
     def rule_count(self) -> int:
         return len(self._rule_base.rules)
+
+    @property
+    def rules(self) -> tuple[FuzzyRule, ...]:
+        """Expone la base inmutable que evalua este mismo motor."""
+        return self._rule_base.rules
 
     def _build_universe(self, step: float) -> tuple[float, ...]:
         minimum = self._output.minimum

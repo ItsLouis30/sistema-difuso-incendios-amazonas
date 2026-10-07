@@ -7,6 +7,7 @@ const ManualPage = lazy(() => import('../pages/ManualPage').then((module) => ({ 
 const HistoricalPage = lazy(() => import('../pages/HistoricalPage').then((module) => ({ default: module.HistoricalPage })))
 const HistoryPage = lazy(() => import('../pages/HistoryPage').then((module) => ({ default: module.HistoryPage })))
 const MethodologyPage = lazy(() => import('../pages/MethodologyPage').then((module) => ({ default: module.MethodologyPage })))
+const RulesPage = lazy(() => import('../pages/RulesPage').then((module) => ({ default: module.RulesPage })))
 
 function PageFallback() {
   return (
@@ -27,6 +28,7 @@ export function App() {
               <Route path="manual" element={<ManualPage />} />
               <Route path="historico" element={<HistoricalPage />} />
               <Route path="historial" element={<HistoryPage />} />
+              <Route path="reglas" element={<RulesPage />} />
               <Route path="metodologia" element={<MethodologyPage />} />
               <Route path="*" element={<Navigate to="/manual" replace />} />
             </Route>

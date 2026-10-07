@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from app.api.dependencies import get_services
-from app.api.schemas.model import ModelResponse
+from app.api.schemas.model import ModelResponse, RulesResponse
 from app.api.serializers import serialize_variable
 from app.infrastructure.configuration import ApplicationServices
 
@@ -46,4 +46,28 @@ def get_model(
                 "de la estacion SENAMHI 000375."
             ),
         },
+    )
+
+
+@router.get(
+    "/rules",
+    response_model=RulesResponse,
+    summary="Consultar la base de reglas que utiliza el motor Mamdani",
+)
+def get_rules(
+    services: Annotated[ApplicationServices, Depends(get_services)],
+) -> RulesResponse:
+    system = services.fuzzy_system
+    return RulesResponse(
+        model_id=system.metadata.model_id,
+        model_version=system.metadata.version,
+        total_reglas=system.rule_count,
+        reglas=[
+            {
+                "numero": rule.number,
+                "antecedentes": dict(rule.antecedents),
+                "consecuente": rule.consequent,
+            }
+            for rule in system.rules
+        ],
     )

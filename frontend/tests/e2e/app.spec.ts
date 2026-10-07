@@ -81,3 +81,18 @@ test('informa claramente cuando la API no está disponible', async ({ page }) =>
   await expect(page.getByText('API desconectada')).toBeVisible()
   await expect(page.getByRole('alert')).toContainText('No pudimos conectar con el backend')
 })
+
+test('permite auditar y filtrar la misma base de 192 reglas', async ({ page }) => {
+  await page.goto('/reglas')
+
+  await expect(page.getByRole('heading', { name: 'Base de conocimiento.' })).toBeVisible()
+  await expect(page.getByText('192 de 192 reglas visibles')).toBeVisible()
+
+  await page.getByRole('searchbox', { name: 'Buscar regla' }).fill('R86')
+  await expect(page.getByText('1 de 192 reglas visibles')).toBeVisible()
+  await expect(page.getByText('R86', { exact: true })).toBeVisible()
+
+  await page.getByLabel('Abrir detalle de la regla R86').click()
+  await expect(page.getByRole('heading', { name: 'Lectura de la regla' })).toBeVisible()
+  await expect(page.getByText(/SI HR mínima es/)).toBeVisible()
+})

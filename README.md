@@ -344,6 +344,7 @@ Prefijo sugerido: `/api/v1`.
 |---|---|
 | `GET /health` | Estado básico del backend |
 | `GET /api/v1/model` | Dominios, etiquetas, funciones, versión y fuente |
+| `GET /api/v1/rules` | Las 192 reglas exactas utilizadas por el motor Mamdani |
 | `POST /api/v1/inferences` | Inferencia con cuatro entradas manuales |
 | `GET /api/v1/inferences/history/{date}` | Inferencia para una fecha del CSV |
 | `GET /api/v1/history/range` | Rango temporal y cobertura disponible |
@@ -417,8 +418,9 @@ La aplicación web debe incluir:
 5. variables utilizadas y procedencia de datos;
 6. reglas activadas, fuerza de disparo y explicación legible;
 7. gráficas de funciones de pertenencia y conjunto agregado;
-8. mensajes claros para datos ausentes, fechas inválidas y valores fuera de dominio;
-9. aviso visible de que el índice no predice ignición ni reemplaza decisiones institucionales.
+8. explorador de las 192 reglas con búsqueda, filtros y lectura lingüística;
+9. mensajes claros para datos ausentes, fechas inválidas y valores fuera de dominio;
+10. aviso visible de que el índice no predice ignición ni reemplaza decisiones institucionales.
 
 Los colores de las categorías no deben ser la única forma de comunicar el nivel. Cada resultado debe incluir texto y valor numérico.
 

@@ -7,6 +7,7 @@ from app.domain.fuzzy.fuzzifier import SingletonFuzzifier
 from app.domain.fuzzy.inference_engine import MamdaniInferenceEngine
 from app.domain.model import (
     InferenceResult,
+    FuzzyRule,
     LinguisticVariable,
     ModelMetadata,
     OutputAction,
@@ -35,6 +36,10 @@ class MamdaniSystem:
     @property
     def rule_count(self) -> int:
         return self._engine.rule_count
+
+    @property
+    def rules(self) -> tuple[FuzzyRule, ...]:
+        return self._engine.rules
 
     def evaluate(self, crisp_inputs: Mapping[str, float]) -> InferenceResult:
         memberships = self._fuzzifier.fuzzify(crisp_inputs)
