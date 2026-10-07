@@ -87,13 +87,16 @@ export function ManualPage() {
             </button>
             </div>
           </div>
-          <span
-            className="hidden h-20 w-20 shrink-0 flex-col items-center justify-center rounded-full bg-white text-[10px] text-muted xl:flex"
-            title="Chachapoyas, Amazonas, Perú"
-          >
-            <MapPin size={20} className="mb-0.5 text-ink" />
-            Chachapoyas
-          </span>
+          <aside className="hidden w-[220px] shrink-0 items-start gap-3 rounded-3xl border border-line bg-white p-4 xl:flex">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-shell text-ink">
+              <MapPin size={18} />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[10px] font-semibold uppercase tracking-[0.08em] text-muted">Ámbito del modelo</span>
+              <strong className="mt-1 block text-sm leading-tight text-ink">Chachapoyas, Amazonas</strong>
+              <span className="mt-1 block text-[11px] leading-snug text-muted">Punto geográfico de referencia</span>
+            </span>
+          </aside>
         </div>
       </section>
 

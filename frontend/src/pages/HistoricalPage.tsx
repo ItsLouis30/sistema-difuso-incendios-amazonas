@@ -71,6 +71,15 @@ export function HistoricalPage() {
         }
       />
 
+      <div className="px-4 pt-4 md:px-6">
+        <div className="flex items-start gap-3 rounded-3xl border border-line bg-white px-4 py-3 text-xs leading-relaxed text-muted">
+          <Info size={16} className="mt-0.5 shrink-0 text-ember-500" />
+          <p>
+            <strong className="text-ink">Fuente histórica:</strong> reanálisis ERA5 y ERA5-Land del ECMWF, consultados mediante Open-Meteo. SENAMHI también emplea ERA5 en estudios climáticos; no es proveedor ni validador de los registros usados aquí.
+          </p>
+        </div>
+      </div>
+
       {pipeline && (
         <div className="px-4 pt-4 md:px-6">
           <PipelineStrip step={pipeline.step} done={!pipeline.running} />

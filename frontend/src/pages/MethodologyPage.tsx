@@ -16,7 +16,7 @@ const sources = [
   {
     Icon: Satellite,
     title: 'ERA5 y ERA5-Land',
-    text: 'Las variables atmosféricas proceden de ERA5 y la humedad superficial del suelo de ERA5-Land, consultadas mediante Open-Meteo para celdas próximas a Chachapoyas. Son datos de reanálisis, no mediciones directas de la estación.',
+    text: 'Las variables proceden de los reanálisis ERA5 y ERA5-Land del ECMWF, consultados mediante Open-Meteo para celdas próximas a Chachapoyas. SENAMHI también utiliza ERA5 como insumo en estudios y productos climáticos del Perú, pero no suministra ni valida los datos de este sistema.',
   },
   {
     Icon: CloudRain,

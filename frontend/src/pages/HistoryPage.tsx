@@ -102,8 +102,8 @@ export function HistoryPage() {
             </button>
           </>
         }
-        title="¿Cómo evolucionó el nivel preventivo?"
-        subtitle={`${days} días hasta el ${formatDate(endDate)}.`}
+        title="Evolución histórica del índice preventivo."
+        subtitle={`${days} evaluaciones históricas hasta el ${formatDate(endDate)} · no es un pronóstico.`}
       />
 
       {error && <div className="px-4 pt-4 md:px-6"><ErrorState message={error} /></div>}
@@ -125,7 +125,7 @@ export function HistoryPage() {
         <Card className="flex flex-col gap-4 sm:col-span-2 xl:col-span-8">
           <CardTitle
             title="Índice por fecha"
-            caption="Cada barra es una inferencia histórica independiente"
+            caption="Cada barra es una inferencia histórica independiente; no se proyectan valores futuros"
             action={
               <div className="hidden flex-wrap justify-end gap-2 md:flex">
                 {Object.entries(CATEGORY_META).map(([key, meta]) => (

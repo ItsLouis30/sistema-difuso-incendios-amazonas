@@ -170,13 +170,27 @@ export function ResultExplanationCard({ result, totalRules }: { result: Inferenc
           )}
         </section>
 
-        <section className="p-5 sm:p-6">
+        <section className="flex flex-col p-5 sm:p-6">
           <div className="flex items-center gap-2 text-sm font-semibold">
             <ShieldCheck size={17} className="text-ember-500" /> Alcance del resultado
           </div>
           <p className="mt-3 text-[13px] leading-relaxed text-muted">
             Esta evaluación se basa en reglas difusas. No constituye una alerta oficial ni predice la ocurrencia de un incendio forestal.
           </p>
+          <dl className="mt-5 grid flex-1 content-center gap-2">
+            <div className="rounded-2xl bg-shell px-4 py-3">
+              <dt className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted">Qué evalúa</dt>
+              <dd className="mt-1 text-xs leading-relaxed text-ink">Condiciones climáticas favorables para definir preparación preventiva.</dd>
+            </div>
+            <div className="rounded-2xl bg-shell px-4 py-3">
+              <dt className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted">Qué no predice</dt>
+              <dd className="mt-1 text-xs leading-relaxed text-ink">La ignición, ubicación o probabilidad de un incendio futuro.</dd>
+            </div>
+            <div className="rounded-2xl bg-shell px-4 py-3">
+              <dt className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted">Ámbito</dt>
+              <dd className="mt-1 text-xs leading-relaxed text-ink">Punto de referencia de Chachapoyas; el resultado no es un mapa de riesgo regional.</dd>
+            </div>
+          </dl>
         </section>
       </div>
     </Card>
