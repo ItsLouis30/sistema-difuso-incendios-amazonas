@@ -4,6 +4,7 @@ import { resultCard, runManualInference, setManualInputs } from './helpers'
 test('ejecuta una inferencia manual completa desde la interfaz', async ({ page }) => {
   await page.goto('/manual')
   await expect(page.getByText('API conectada')).toBeVisible()
+  await expect(page.getByText('Alineado con ODS 13 · Acción por el clima')).toBeVisible()
   await expect(resultCard(page)).toHaveCount(0)
   await expect(page.getByText('Ejecuta una evaluación para ver el índice, sus reglas y la explicación.')).toBeVisible()
   await expect(page.getByText('Punto geográfico de referencia')).toBeVisible()
@@ -28,6 +29,14 @@ test('ejecuta una inferencia manual completa desde la interfaz', async ({ page }
   await expect(page.getByText('Centroide = 91.67')).toBeVisible()
   await expect(page.getByText('Rango del modelo: 0–6 m/s', { exact: false }).first()).toBeVisible()
   await expect(page.getByText('el resultado no es un mapa de riesgo regional', { exact: false })).toBeVisible()
+})
+
+test('explica la alineación académica con el ODS 13', async ({ page }) => {
+  await page.goto('/metodologia')
+
+  await expect(page.getByRole('heading', { name: 'ODS 13 · Acción por el clima' })).toBeVisible()
+  await expect(page.getByText('Fortalece académicamente la vigilancia', { exact: false })).toBeVisible()
+  await expect(page.getByText('no constituye una alerta oficial', { exact: false })).toBeVisible()
 })
 
 test('restablecer elimina el resultado anterior', async ({ page }) => {
