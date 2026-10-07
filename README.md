@@ -16,8 +16,9 @@ El resultado es un índice continuo de `0–100`, una categoría lingüística y
 ## Estado del proyecto
 
 La planificación funcional y matemática de la versión 1 está cerrada. El núcleo
-Mamdani, la serie histórica definitiva y los casos de uso del backend ya están
-implementados y verificados. La siguiente etapa es exponerlos mediante la API.
+Mamdani, la serie histórica, la API y la interfaz web manual e histórica están
+implementados. El trabajo pendiente se concentra en ampliar las pruebas integrales
+y preparar las corridas y evidencias finales de presentación.
 
 - [x] Configuración versionada del modelo difuso
 - [x] Motor Mamdani y explicación de reglas
@@ -30,10 +31,10 @@ implementados y verificados. La siguiente etapa es exponerlos mediante la API.
 - [x] Auditoría matemática y semántica de funciones y 192 reglas
 - [x] Repositorio histórico y casos de uso manual e histórico
 - [x] API REST del backend
-- [ ] Interfaz web manual e histórica
+- [x] Interfaz web manual e histórica
 - [ ] Gráficos de pertenencia, inferencia y sensibilidad
 - [ ] Pruebas de integración y corridas demostrativas de extremo a extremo
-- [ ] Documentación de ejecución y resultados
+- [x] Documentación de ejecución
 
 La meta del repositorio es una **implementación completa**, separada en backend y frontend, con un núcleo matemático verificable y una interfaz utilizable.
 

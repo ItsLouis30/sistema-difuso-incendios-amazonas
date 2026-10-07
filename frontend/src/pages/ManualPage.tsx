@@ -73,9 +73,9 @@ export function ManualPage() {
               type="button"
               onClick={() => void submit()}
               disabled={running}
-              className="inline-flex items-center gap-6 rounded-full bg-ember-500 py-3 pl-6 pr-5 text-sm font-medium text-white shadow-[0_8px_24px_-10px_rgba(226,96,58,0.9)] transition-colors hover:bg-ember-600 disabled:opacity-60"
+              className="inline-flex max-w-full items-center gap-3 rounded-full bg-ember-500 py-3 pl-6 pr-5 text-sm font-medium text-white shadow-[0_8px_24px_-10px_rgba(226,96,58,0.9)] transition-colors hover:bg-ember-600 disabled:opacity-60 sm:gap-6"
             >
-              {running ? 'Evaluando…' : 'Calcular nivel de riesgo'}
+              {running ? 'Evaluando…' : 'Calcular nivel preventivo'}
               <ArrowRight size={18} />
             </button>
             <button
@@ -90,8 +90,8 @@ export function ManualPage() {
             </button>
           </>
         }
-        title="Hola, ¿qué tan seco está el bosque?"
-        subtitle="Ajusta las condiciones y evalúa."
+        title="¿Qué nivel preventivo indican las condiciones?"
+        subtitle="Ajusta las cuatro variables y evalúa."
         aside={
           <span
             className="hidden h-20 w-20 shrink-0 flex-col items-center justify-center rounded-full bg-white text-[10px] text-muted xl:flex"

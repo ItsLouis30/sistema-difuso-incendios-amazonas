@@ -78,12 +78,11 @@ export const CATEGORY_META: Record<
   CategoryCode,
   { label: string; color: string; className: string }
 > = {
-  // Rampa secuencial: a mayor nivel de despliegue, tono brasa más intenso.
-  muy_bajo: { label: 'Muy bajo', color: '#e9e1dc', className: 'level-very-low' },
-  bajo: { label: 'Bajo', color: '#f2c2ae', className: 'level-low' },
-  moderado: { label: 'Moderado', color: '#e8946f', className: 'level-moderate' },
-  alto: { label: 'Alto', color: '#d2582f', className: 'level-high' },
-  muy_alto: { label: 'Muy alto', color: '#8e2f16', className: 'level-very-high' },
+  muy_bajo: { label: 'Muy bajo', color: '#22c55e', className: 'level-very-low' },
+  bajo: { label: 'Bajo', color: '#84cc16', className: 'level-low' },
+  moderado: { label: 'Moderado', color: '#eab308', className: 'level-moderate' },
+  alto: { label: 'Alto', color: '#f97316', className: 'level-high' },
+  muy_alto: { label: 'Muy alto', color: '#dc2626', className: 'level-very-high' },
 }
 
 export const TERM_LABELS: Record<string, string> = {

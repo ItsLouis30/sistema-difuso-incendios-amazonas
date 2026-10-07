@@ -50,6 +50,9 @@ export function VariableCard({ info, value, memberships, onChange, readOnly = fa
           )}
           <span className="text-sm text-muted">{info.unit}</span>
         </div>
+        <p className="mt-2 text-xs leading-relaxed text-muted" title={info.influence}>
+          {info.explanation} {info.influence}
+        </p>
       </div>
 
       {readOnly ? (

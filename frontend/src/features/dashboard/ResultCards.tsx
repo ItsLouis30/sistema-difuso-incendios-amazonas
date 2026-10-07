@@ -24,10 +24,11 @@ function label(term: string) {
   return TERM_LABELS[term] ?? term
 }
 
-/** Mezcla un tono casi blanco con la brasa según t (0..1) para codificar grados de pertenencia. */
-function emberShade(t: number) {
+/** Mezcla un color semántico con el fondo según el grado de pertenencia (0..1). */
+function membershipShade(hex: string, t: number) {
   const from = [251, 243, 239]
-  const to = [194, 78, 38]
+  const normalized = hex.replace('#', '')
+  const to = [0, 2, 4].map((offset) => Number.parseInt(normalized.slice(offset, offset + 2), 16))
   const mix = from.map((channel, index) => Math.round(channel + (to[index] - channel) * t))
   return `rgb(${mix.join(',')})`
 }
@@ -58,7 +59,7 @@ export function ResultHeroCard({ result }: { result: InferenceResponse }) {
   const code = result.resultado.codigo_categoria
   const marker = Math.max(0, Math.min(100, score))
   return (
-    <article className="rise flex h-full flex-col gap-6 rounded-[32px] bg-ink p-7 text-white">
+    <article className="rise flex h-full min-w-0 flex-col gap-6 overflow-hidden rounded-[32px] bg-ink p-7 text-white">
       <div className="flex items-center justify-between gap-3">
         <span className="text-[13px] text-[#bdb8b3]">Nivel de despliegue preventivo</span>
         <span className="flex items-center gap-2 rounded-full bg-[#2a2826] px-3 py-1.5 text-[13px]">
@@ -86,9 +87,9 @@ export function ResultHeroCard({ result }: { result: InferenceResponse }) {
             style={{ left: `${marker}%` }}
           />
         </div>
-        <div className="flex justify-between text-xs text-[#bdb8b3]">
+        <div className="grid grid-cols-5 gap-1 text-center text-[10px] text-[#bdb8b3] sm:text-xs">
           {CATEGORY_ORDER.map((item) => (
-            <span key={item} className={item === code ? 'text-white' : ''}>
+            <span key={item} className={`min-w-0 ${item === code ? 'text-white' : ''}`}>
               {CATEGORY_META[item].label}
             </span>
           ))}
@@ -97,9 +98,9 @@ export function ResultHeroCard({ result }: { result: InferenceResponse }) {
 
       <div className="flex items-start gap-3.5 rounded-[22px] bg-[#232120] p-4">
         <Sunburst />
-        <div>
+        <div className="min-w-0">
           <span className="text-xs text-[#bdb8b3]">Acción recomendada</span>
-          <p className="mt-1 text-[17px] font-medium leading-snug">{result.resultado.recomendacion}</p>
+          <p className="mt-1 break-words text-[17px] font-medium leading-snug">{result.resultado.recomendacion}</p>
         </div>
       </div>
       <p className="mt-auto text-xs leading-relaxed text-[#bdb8b3]">
@@ -128,7 +129,7 @@ export function OutputMembershipCard({ result }: { result: InferenceResponse }) 
                 cx="130"
                 cy={cy}
                 r={r}
-                fill={emberShade(mu)}
+                fill={membershipShade(CATEGORY_META[code].color, mu)}
                 stroke={isSelected ? 'var(--color-ink)' : '#fff'}
                 strokeWidth={2}
               />

@@ -55,7 +55,7 @@ export function HistoricalPage() {
               type="button"
               onClick={() => void submit()}
               disabled={running || !selectedDate}
-              className="inline-flex items-center gap-6 rounded-full bg-ember-500 py-3 pl-6 pr-5 text-sm font-medium text-white shadow-[0_8px_24px_-10px_rgba(226,96,58,0.9)] transition-colors hover:bg-ember-600 disabled:opacity-60"
+              className="inline-flex max-w-full items-center gap-3 rounded-full bg-ember-500 py-3 pl-6 pr-5 text-sm font-medium text-white shadow-[0_8px_24px_-10px_rgba(226,96,58,0.9)] transition-colors hover:bg-ember-600 disabled:opacity-60 sm:gap-6"
             >
               {running ? 'Consultando…' : 'Evaluar fecha'}
               <ArrowRight size={18} />

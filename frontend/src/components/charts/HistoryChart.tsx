@@ -19,7 +19,7 @@ export function HistoryChart({ data }: { data: HistoryPoint[] }) {
           />
           <YAxis domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} stroke="#66625e" tickLine={false} axisLine={false} fontSize={11} />
           <Tooltip content={<HistoryTooltip />} cursor={{ fill: '#f3f3f3', radius: 8 }} />
-          <Bar dataKey="indice" radius={[999, 999, 999, 999]} maxBarSize={14} isAnimationActive animationDuration={600}>
+          <Bar dataKey="indice" radius={[999, 999, 999, 999]} maxBarSize={14} isAnimationActive={false}>
             {data.map((point) => (
               <Cell key={point.fecha} fill={CATEGORY_META[point.codigo].color} />
             ))}

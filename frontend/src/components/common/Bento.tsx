@@ -57,10 +57,10 @@ export function HeroBand({ left, title, subtitle, aside }: {
   aside?: ReactNode
 }) {
   return (
-    <section className="flex flex-col gap-6 bg-band px-5 pb-8 pt-7 md:px-8 lg:flex-row lg:items-center lg:justify-between">
-      <div className="flex flex-wrap items-center gap-4">{left}</div>
-      <div className="flex items-center gap-5">
-        <div className="lg:text-left">
+    <section className="flex min-w-0 flex-col gap-6 overflow-hidden bg-band px-5 pb-8 pt-7 md:px-8 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex w-full min-w-0 flex-wrap items-center gap-4 lg:w-auto">{left}</div>
+      <div className="flex min-w-0 items-center gap-5">
+        <div className="min-w-0 lg:text-left">
           <h1 className="font-display text-[26px] font-semibold leading-tight tracking-[-0.02em] text-ink md:text-[34px]">{title}</h1>
           <p className="font-display text-[26px] font-medium leading-tight tracking-[-0.02em] text-[#a9a4a0] md:text-[34px]">{subtitle}</p>
         </div>

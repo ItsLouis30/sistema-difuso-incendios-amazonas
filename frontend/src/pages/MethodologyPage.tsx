@@ -15,18 +15,18 @@ const methodologySteps = [
 const sources = [
   {
     Icon: Satellite,
-    title: 'Copernicus ERA5 & ERA5-Land',
-    text: 'Proporcionado por el ECMWF (Centro Europeo de Previsiones Meteorológicas a Plazo Medio). Se utilizó para extraer datos reanalizados de humedad superficial del suelo, velocidad del viento y humedad relativa, ofreciendo una resolución espacial sin precedentes.',
+    title: 'ERA5 y ERA5-Land',
+    text: 'Las variables atmosféricas proceden de ERA5 y la humedad superficial del suelo de ERA5-Land, consultadas mediante Open-Meteo para celdas próximas a Chachapoyas. Son datos de reanálisis, no mediciones directas de la estación.',
   },
   {
     Icon: CloudRain,
-    title: 'SENAMHI',
-    text: 'El Servicio Nacional de Meteorología e Hidrología del Perú es la base principal para validar empíricamente los umbrales de precipitaciones (días secos consecutivos) y correlacionar los patrones climáticos locales en Chachapoyas.',
+    title: 'Serie diaria preparada',
+    text: 'El dataset integra precipitación, HR mínima, viento máximo y humedad del suelo entre 2000 y 2025. Los días secos se calculan de forma determinista usando precipitación menor a 1 mm y sin convertir faltantes en cero.',
   },
   {
     Icon: BookOpen,
-    title: 'Fundamentos del modelo difuso',
-    text: 'Los conjuntos borrosos, las funciones de pertenencia y las reglas del sistema de inferencia (SI-ENTONCES) fueron extraídas y adaptadas a partir de revisiones bibliográficas de modelos preventivos forestales internacionales, ajustando el peso probabilístico mediante la distribución de frecuencias locales observadas en los últimos 20 años.',
+    title: 'Diseño académico auditable',
+    text: 'Las funciones se calibraron con la distribución estacional de la serie y la base de 192 reglas es una heurística académica monotónica. El proyecto no afirma validación con incendios observados ni revisión experta.',
   },
 ]
 
@@ -50,7 +50,7 @@ export function MethodologyPage() {
         <Card className="md:col-span-2 xl:col-span-12">
           <CardTitle
             title="El pipeline de evaluación Mamdani"
-            caption="Utiliza lógica difusa para replicar el razonamiento de un experto forestal: las variables tienen grados de verdad en lugar de estados binarios."
+            caption="Utiliza lógica difusa para representar relaciones graduales: las variables tienen grados de pertenencia en lugar de estados binarios."
           />
           <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
             {methodologySteps.map((step) => (
@@ -102,7 +102,7 @@ export function MethodologyPage() {
         <Card className="flex flex-col gap-4 xl:col-span-5">
           <CardTitle
             title="Base de conocimiento"
-            caption={`El conocimiento experto se encapsuló en ${model?.total_reglas ?? 192} reglas probabilísticas que cubren todas las combinaciones posibles.`}
+            caption={`La heurística académica se organizó en ${model?.total_reglas ?? 192} reglas difusas que cubren todas las combinaciones lingüísticas posibles.`}
             action={<IconCircle dark><Binary size={16} /></IconCircle>}
           />
           <div className="flex min-h-64 flex-1 flex-col overflow-hidden rounded-3xl bg-ink p-4">
@@ -125,7 +125,7 @@ export function MethodologyPage() {
         <Card className="md:col-span-2 xl:col-span-12">
           <CardTitle
             title="Origen de los datos"
-            caption="El modelado de las variables meteorológicas y la evaluación histórica se construyeron con repositorios climáticos de alta fidelidad."
+            caption="La evaluación histórica utiliza series de reanálisis documentadas y preparadas para el punto de referencia de Chachapoyas."
           />
           <div className="mt-5 grid grid-cols-1 gap-3 lg:grid-cols-3">
             {sources.map(({ Icon, title, text }) => (

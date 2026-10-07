@@ -102,7 +102,7 @@ export function HistoryPage() {
             </button>
           </>
         }
-        title="¿Cómo evolucionó el riesgo?"
+        title="¿Cómo evolucionó el nivel preventivo?"
         subtitle={`${days} días hasta el ${formatDate(endDate)}.`}
       />
 

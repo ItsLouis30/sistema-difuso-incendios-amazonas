@@ -19,14 +19,14 @@ export function AppShell() {
         : { text: 'API desconectada', dot: 'bg-ember-500' }
 
   return (
-    <div className="min-h-screen p-0 sm:p-4 lg:p-8">
-      <div className="mx-auto max-w-[1600px] overflow-hidden bg-shell sm:rounded-[40px]">
-        <header className="flex flex-wrap items-center gap-4 bg-band px-5 pt-6 md:px-8">
-          <div className="flex items-center gap-3">
+    <div className="min-h-screen overflow-x-hidden p-0 sm:p-4 lg:p-8">
+      <div className="mx-auto w-full min-w-0 max-w-[1600px] overflow-hidden bg-shell sm:rounded-[40px]">
+        <header className="flex min-w-0 flex-wrap items-center gap-4 bg-band px-5 pt-6 md:px-8">
+          <div className="flex w-full min-w-0 items-center gap-3 sm:w-auto">
             <span className="flex h-12 w-12 items-center justify-center rounded-full bg-ink text-white">
               <Flame size={22} strokeWidth={2.2} />
             </span>
-            <span className="leading-tight">
+            <span className="min-w-0 leading-tight">
               <strong className="block font-display text-lg font-semibold">Sistema Difuso</strong>
               <span className="text-sm text-muted">Incendios · Chachapoyas, Amazonas</span>
             </span>
@@ -52,7 +52,7 @@ export function AppShell() {
             ))}
           </nav>
 
-          <div className="ml-auto flex items-center gap-3 md:ml-4">
+          <div className="flex w-full items-center gap-3 sm:ml-auto sm:w-auto md:ml-4">
             <span className="flex items-center gap-2 rounded-full border border-line bg-white px-3.5 py-2 text-xs font-medium">
               <span className={`h-2 w-2 rounded-full ${status.dot}`} />
               {status.text}
