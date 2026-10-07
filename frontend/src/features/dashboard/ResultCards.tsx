@@ -1,7 +1,7 @@
 import { Check, Clock3, Info, LoaderCircle, Search, ShieldCheck, Sparkles } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { CATEGORY_MEANINGS, CATEGORY_META, PIPELINE, TERM_LABELS, VARIABLES } from '../../app/constants'
+import { CATEGORY_MEANINGS, CATEGORY_META, CATEGORY_SUMMARIES, PIPELINE, TERM_LABELS, VARIABLES } from '../../app/constants'
 import { formatNumber } from '../../app/format'
 import { Card, CardTitle, IconCircle } from '../../components/common/Bento'
 import { OutputCurveChart } from '../../components/charts/OutputCurveChart'
@@ -78,19 +78,26 @@ export function ResultHeroCard({ result }: { result: InferenceResponse }) {
   const marker = Math.max(0, Math.min(100, score))
   return (
     <article className="rise flex h-full min-w-0 flex-col gap-6 overflow-hidden rounded-[32px] bg-ink p-7 text-white">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center gap-3">
         <span className="text-[13px] text-[#bdb8b3]">Nivel de despliegue preventivo</span>
-        <span className="flex items-center gap-2 rounded-full bg-[#2a2826] px-3 py-1.5 text-[13px]">
-          <span className="h-2 w-2 rounded-full" style={{ background: CATEGORY_META[code].color }} />
-          {result.resultado.categoria}
-        </span>
       </div>
 
-      <div className="flex items-baseline gap-2.5">
-        <strong className="font-display text-[88px] font-semibold leading-[0.9] tracking-[-0.04em] tabular-nums sm:text-[112px]">
-          {formatNumber(score, 1)}
-        </strong>
-        <span className="text-[15px] text-[#bdb8b3]">/ 100</span>
+      <div>
+        <div className="flex items-baseline gap-2.5">
+          <strong className="font-display text-[80px] font-semibold leading-[0.9] tracking-[-0.04em] tabular-nums sm:text-[104px]">
+            {formatNumber(score, 1)}
+          </strong>
+          <span className="text-[17px] text-[#bdb8b3]">/100</span>
+        </div>
+        <div className="mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <strong
+            className="font-display text-[30px] font-semibold uppercase leading-none tracking-[0.02em] sm:text-[36px]"
+            style={{ color: CATEGORY_META[code].color }}
+          >
+            {result.resultado.categoria}
+          </strong>
+          <span className="text-sm text-[#bdb8b3]">{CATEGORY_SUMMARIES[code]}</span>
+        </div>
       </div>
 
       <div className="flex flex-col gap-2.5">
@@ -132,7 +139,7 @@ export function ResultHeroCard({ result }: { result: InferenceResponse }) {
   )
 }
 
-export function ResultExplanationCard({ result }: { result: InferenceResponse }) {
+export function ResultExplanationCard({ result, totalRules }: { result: InferenceResponse; totalRules: number }) {
   const { factors, dominantRule } = explanationDetails(result)
 
   return (
@@ -142,17 +149,32 @@ export function ResultExplanationCard({ result }: { result: InferenceResponse })
           <div className="flex items-center gap-2 text-sm font-semibold">
             <Sparkles size={17} className="text-ember-500" /> ¿Por qué {result.resultado.categoria}?
           </div>
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {factors.map((factor) => (
-              <span key={factor.key} className="rounded-full bg-shell px-2.5 py-1 text-xs">
-                {factor.variable}: <strong>{factor.label}</strong> · μ {factor.degree.toFixed(2)}
-              </span>
-            ))}
+          <h3 className="mt-4 text-xs font-semibold uppercase tracking-[0.08em] text-muted">Principales señales</h3>
+          <div className="mt-2 overflow-hidden rounded-2xl border border-line">
+            <table className="w-full table-fixed text-left text-xs sm:text-[13px]">
+              <thead className="bg-shell text-muted">
+                <tr>
+                  <th className="w-[48%] px-3 py-2 font-medium">Variable</th>
+                  <th className="w-[34%] px-3 py-2 font-medium">Categoría</th>
+                  <th className="w-[18%] px-3 py-2 text-right font-medium">μ</th>
+                </tr>
+              </thead>
+              <tbody>
+                {factors.map((factor) => (
+                  <tr key={factor.key} className="border-t border-line first:border-t-0">
+                    <td className="px-3 py-2.5 text-muted">{factor.variable}</td>
+                    <td className="px-3 py-2.5 font-semibold">{factor.label}</td>
+                    <td className="px-3 py-2.5 text-right font-mono tabular-nums">{factor.degree.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
           {dominantRule && (
             <p className="mt-3 text-[13px] leading-relaxed text-muted">
-              Estas pertenencias activaron {result.reglas_activas.length} reglas. La de mayor activación fue R{dominantRule.numero}:{' '}
-              {ruleText(dominantRule).replace(/^SI /, '').toLowerCase()} → {label(dominantRule.consecuente)}, con μ {dominantRule.activacion.toFixed(2)}.
+              Estas condiciones activaron <strong className="text-ink">{result.reglas_activas.length} de {totalRules} reglas</strong>. La mayor activación fue{' '}
+              <strong className="text-ink">R{dominantRule.numero}, con μ = {dominantRule.activacion.toFixed(2)}</strong>:{' '}
+              {ruleText(dominantRule).replace(/^SI /, '').toLowerCase()} → {label(dominantRule.consecuente)}.
             </p>
           )}
         </section>
@@ -247,7 +269,8 @@ export function DryDaysCard({ result, maximum = 15 }: { result: InferenceRespons
       </IconCircle>
       <div>
         <strong className="font-display text-[26px] font-semibold">{days} {days === 1 ? 'día' : 'días'}</strong>
-        <p className="text-xs text-muted">sin lluvia ≥ 1 mm</p>
+        <p className="text-xs font-medium text-ink">días secos consecutivos</p>
+        <p className="mt-1 text-xs text-muted">Precipitación diaria menor a 1 mm.</p>
       </div>
       <div className="mt-auto grid grid-cols-5 gap-2" aria-hidden>
         {Array.from({ length: maximum }, (_, index) => (

@@ -50,7 +50,7 @@ export function InferenceDashboard({ inputs, result, onInputChange, pipeline }: 
         )}
       </div>
 
-      {ready && result && <ResultExplanationCard result={result} />}
+      {ready && result && <ResultExplanationCard result={result} totalRules={totalRules} />}
 
       {pipeline && <PipelineStrip step={pipeline.step} done={!pipeline.running} />}
 

@@ -3,8 +3,8 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { useAppContext } from '../../app/AppContext'
 
 const navItems = [
-  { to: '/manual', label: 'Manual', Icon: SlidersHorizontal },
-  { to: '/historico', label: 'Histórico', Icon: CalendarDays },
+  { to: '/manual', label: 'Evaluar', Icon: SlidersHorizontal },
+  { to: '/historico', label: 'Por fecha', Icon: CalendarDays },
   { to: '/historial', label: 'Tendencias', Icon: ChartNoAxesCombined },
   { to: '/reglas', label: 'Reglas', Icon: ListTree },
   { to: '/metodologia', label: 'Metodología', Icon: BookOpenText },
@@ -29,7 +29,7 @@ export function AppShell() {
             </span>
             <span className="min-w-0 leading-tight">
               <strong className="block font-display text-lg font-semibold">Sistema Difuso</strong>
-              <span className="text-sm text-muted">Incendios · Chachapoyas, Amazonas</span>
+              <span className="text-sm text-muted">Incendios forestales · Chachapoyas, Amazonas</span>
             </span>
           </div>
 
@@ -58,9 +58,8 @@ export function AppShell() {
               <span className={`h-2 w-2 rounded-full ${status.dot}`} />
               {status.text}
             </span>
-            <span className="hidden text-xs leading-tight text-muted xl:block">
-              <strong className="block text-sm font-medium text-ink">Mamdani v{model?.version ?? '1.1.0'}</strong>
-              {model?.total_reglas ?? 192} reglas
+            <span className="hidden whitespace-nowrap text-xs text-muted xl:block">
+              Mamdani v{model?.version ?? '1.1.0'} · {model?.total_reglas ?? 192} reglas
             </span>
           </div>
         </header>

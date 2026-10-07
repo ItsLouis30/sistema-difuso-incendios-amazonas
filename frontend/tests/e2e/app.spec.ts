@@ -17,8 +17,10 @@ test('ejecuta una inferencia manual completa desde la interfaz', async ({ page }
   expect(response.resultado).toMatchObject({ indice: 91.67, codigo_categoria: 'muy_alto' })
   await expect(resultCard(page).getByText('91.7')).toBeVisible()
   await expect(resultCard(page).getByText('Muy alto', { exact: true }).first()).toBeVisible()
+  await expect(resultCard(page).getByText('Máxima preparación preventiva')).toBeVisible()
   await expect(resultCard(page).getByText('¿Qué significa?')).toBeVisible()
   await expect(page.getByText('¿Por qué Muy alto?')).toBeVisible()
+  await expect(page.getByText('Precipitación diaria menor a 1 mm.', { exact: true })).toBeVisible()
 })
 
 test('restablecer elimina el resultado anterior', async ({ page }) => {

@@ -2,18 +2,12 @@ import { ArrowRight, MapPin, RotateCcw } from 'lucide-react'
 import { useState } from 'react'
 import { DEFAULT_INPUTS, VARIABLES, type InputKey } from '../app/constants'
 import { useAppContext } from '../app/AppContext'
-import { DateBadge, HeroBand } from '../components/common/Bento'
+import { Pill } from '../components/common/Bento'
 import { ErrorState } from '../components/common/Feedback'
 import { InferenceDashboard } from '../features/dashboard/InferenceDashboard'
 import { usePipelineAnimation } from '../features/dashboard/usePipelineAnimation'
 import { api } from '../services/api/client'
 import type { InferenceRequest, InferenceResponse } from '../types/api'
-
-/** DateBadge formatea en UTC; se fija la fecha local para que no se adelante de noche. */
-function todayAsUtc() {
-  const now = new Date()
-  return new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()))
-}
 
 export function ManualPage() {
   const { bootError } = useAppContext()
@@ -60,11 +54,17 @@ export function ManualPage() {
 
   return (
     <>
-      <HeroBand
-        left={
-          <>
-            <DateBadge date={todayAsUtc()} />
-            <span className="hidden h-10 w-px bg-line sm:block" />
+      <section className="overflow-hidden bg-band px-5 pb-8 pt-7 md:px-8">
+        <div className="flex min-w-0 items-start justify-between gap-5">
+          <div className="min-w-0">
+            <Pill tone="dark" className="mb-4 px-4! py-2! text-sm!">Evaluación manual</Pill>
+            <h1 className="font-display text-[28px] font-semibold leading-tight tracking-[-0.02em] text-ink md:text-[36px]">
+              ¿Qué nivel preventivo indican las condiciones?
+            </h1>
+            <p className="mt-1 font-display text-[24px] font-medium leading-tight tracking-[-0.02em] text-[#a9a4a0] md:text-[30px]">
+              Ajusta las cuatro variables y evalúa.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
             <button
               type="button"
               onClick={() => void submit()}
@@ -84,11 +84,8 @@ export function ManualPage() {
             >
               <RotateCcw size={17} />
             </button>
-          </>
-        }
-        title="¿Qué nivel preventivo indican las condiciones?"
-        subtitle="Ajusta las cuatro variables y evalúa."
-        aside={
+            </div>
+          </div>
           <span
             className="hidden h-20 w-20 shrink-0 flex-col items-center justify-center rounded-full bg-white text-[10px] text-muted xl:flex"
             title="Chachapoyas, Amazonas, Perú"
@@ -96,8 +93,8 @@ export function ManualPage() {
             <MapPin size={20} className="mb-0.5 text-ink" />
             Chachapoyas
           </span>
-        }
-      />
+        </div>
+      </section>
 
       {(bootError || error) && (
         <div className="space-y-2 px-4 pt-4 md:px-6">

@@ -98,6 +98,14 @@ export const CATEGORY_MEANINGS: Record<CategoryCode, string> = {
     'La combinación evaluada presenta señales muy marcadas de preparación preventiva. Corresponde sostener el nivel máximo de preparación contemplado por la organización.',
 }
 
+export const CATEGORY_SUMMARIES: Record<CategoryCode, string> = {
+  muy_bajo: 'Vigilancia preventiva básica',
+  bajo: 'Vigilancia preventiva reforzada',
+  moderado: 'Preparación preventiva intermedia',
+  alto: 'Preparación preventiva elevada',
+  muy_alto: 'Máxima preparación preventiva',
+}
+
 export const TERM_LABELS: Record<string, string> = {
   muy_baja: 'Muy baja',
   baja: 'Baja',
