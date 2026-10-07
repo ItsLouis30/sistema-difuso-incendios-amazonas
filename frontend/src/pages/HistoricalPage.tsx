@@ -1,4 +1,4 @@
-import { ArrowRight, CalendarDays, CloudRain, Info } from 'lucide-react'
+import { ArrowRight, CalendarDays, Check, CloudRain, Info, LoaderCircle } from 'lucide-react'
 import { useState } from 'react'
 import { formatDate, formatNumber } from '../app/format'
 import { useAppContext } from '../app/AppContext'
@@ -18,6 +18,19 @@ export function HistoricalPage() {
   const { pipeline, start, play, reset } = usePipelineAnimation()
   const running = pipeline?.running ?? false
   const source = result?.fuente.tipo === 'historical' ? result.fuente : null
+  const actionLabel = !pipeline
+    ? 'Evaluar fecha'
+    : running
+      ? pipeline.step <= 0
+        ? 'Recuperando datos…'
+        : pipeline.step === 1
+          ? 'Fuzzificando…'
+          : pipeline.step <= 3
+            ? 'Evaluando reglas…'
+            : pipeline.step <= 5
+              ? 'Calculando centroide…'
+              : 'Generando resultado…'
+      : 'Resultado listo'
 
   async function submit() {
     setError(null)
@@ -56,10 +69,10 @@ export function HistoricalPage() {
               type="button"
               onClick={() => void submit()}
               disabled={running || !selectedDate}
-              className="inline-flex max-w-full items-center gap-3 rounded-full bg-ember-500 py-3 pl-6 pr-5 text-sm font-medium text-white shadow-[0_8px_24px_-10px_rgba(226,96,58,0.9)] transition-colors hover:bg-ember-600 disabled:opacity-60 sm:gap-6"
+              className="pressable focus-ring inline-flex min-w-[190px] max-w-full items-center justify-between gap-3 rounded-full bg-ember-500 py-3 pl-6 pr-5 text-sm font-medium text-white shadow-[0_8px_24px_-10px_rgba(226,96,58,0.9)] hover:bg-ember-600 disabled:cursor-wait disabled:opacity-80 sm:gap-6"
             >
-              {running ? 'Consultando…' : 'Evaluar fecha'}
-              <ArrowRight size={18} />
+              {actionLabel}
+              {running ? <LoaderCircle size={18} className="animate-spin" /> : result ? <Check size={18} /> : <ArrowRight size={18} />}
             </button>
           </>
         }

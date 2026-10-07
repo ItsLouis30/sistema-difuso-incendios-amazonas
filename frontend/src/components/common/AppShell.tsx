@@ -42,7 +42,7 @@ export function AppShell() {
                 key={to}
                 to={to}
                 className={({ isActive }) =>
-                  `flex shrink-0 items-center gap-2 min-h-11 rounded-full px-[18px] text-sm font-medium transition-colors ${
+                  `pressable focus-ring flex shrink-0 items-center gap-2 min-h-11 rounded-full px-[18px] text-sm font-medium ${
                     isActive ? 'bg-ink text-white' : 'border border-line bg-white text-ink hover:bg-[#f0f0f0]'
                   }`
                 }
@@ -54,7 +54,7 @@ export function AppShell() {
           </nav>
 
           <div className="flex w-full items-center gap-3 sm:ml-auto sm:w-auto md:ml-4">
-            <span className="flex items-center gap-2 rounded-full border border-line bg-white px-3.5 py-2 text-xs font-medium">
+            <span className="flex items-center gap-2 rounded-full border border-line bg-white px-3.5 py-2 text-xs font-medium shadow-[0_8px_20px_-18px_rgba(22,21,20,0.45)]">
               <span className={`h-2 w-2 rounded-full ${status.dot}`} />
               {status.text}
             </span>

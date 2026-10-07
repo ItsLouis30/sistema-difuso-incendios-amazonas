@@ -17,7 +17,7 @@ export function VariableCard({ info, value, memberships, onChange, readOnly = fa
   const decimals = info.step < 0.01 ? 3 : info.step < 1 ? 2 : 0
 
   return (
-    <Card className="flex flex-col gap-4 rounded-[28px]! p-[22px]!">
+    <Card className={`flex flex-col gap-4 rounded-[28px]! p-[22px]! ${readOnly ? '' : 'interactive-card'}`}>
       <div className="flex items-center justify-between gap-3">
         <IconCircle>
           <info.Icon size={16} />

@@ -1,5 +1,5 @@
 import { Check, Clock3, Info, LoaderCircle, Search, ShieldCheck, Sparkles } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { CATEGORY_MEANINGS, CATEGORY_META, CATEGORY_SUMMARIES, PIPELINE, TERM_LABELS, VARIABLES } from '../../app/constants'
 import { formatNumber } from '../../app/format'
@@ -65,10 +65,30 @@ function clippedConsequents(result: InferenceResponse) {
 
 export function ResultHeroCard({ result }: { result: InferenceResponse }) {
   const score = result.resultado.indice
+  const [displayScore, setDisplayScore] = useState(0)
   const code = result.resultado.codigo_categoria
   const marker = Math.max(0, Math.min(100, score))
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setDisplayScore(score)
+      return
+    }
+    let frame = 0
+    const startedAt = performance.now()
+    const duration = 720
+    const animate = (now: number) => {
+      const progress = Math.min(1, (now - startedAt) / duration)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setDisplayScore(score * eased)
+      if (progress < 1) frame = window.requestAnimationFrame(animate)
+    }
+    frame = window.requestAnimationFrame(animate)
+    return () => window.cancelAnimationFrame(frame)
+  }, [score])
+
   return (
-    <article className="rise flex h-full min-w-0 flex-col gap-6 overflow-hidden rounded-[32px] bg-ink p-7 text-white">
+    <article className="rise flex h-full min-w-0 flex-col gap-6 overflow-hidden rounded-[32px] bg-ink p-7 text-white shadow-[0_28px_60px_-38px_rgba(22,21,20,0.85)]">
       <div className="flex items-center gap-3">
         <span className="text-[13px] text-[#bdb8b3]">Nivel de despliegue preventivo</span>
       </div>
@@ -76,7 +96,7 @@ export function ResultHeroCard({ result }: { result: InferenceResponse }) {
       <div>
         <div className="flex items-baseline gap-2.5">
           <strong className="font-display text-[80px] font-semibold leading-[0.9] tracking-[-0.04em] tabular-nums sm:text-[104px]">
-            {formatNumber(score, 1)}
+            {formatNumber(displayScore, 1)}
           </strong>
           <span className="text-[17px] text-[#bdb8b3]">/100</span>
         </div>
@@ -333,7 +353,7 @@ export function RulesCard({ result, totalRules }: { result: InferenceResponse; t
         {rules.map((rule) => {
           const isDominant = rule.numero === dominant
           return (
-            <li key={rule.numero} className="flex items-center gap-3.5 rounded-[20px] border border-[#efecea] px-3.5 py-3">
+            <li key={rule.numero} className="rule-row flex items-center gap-3.5 rounded-[20px] border border-[#efecea] px-3.5 py-3">
               <span
                 className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
                   isDominant ? 'bg-ember-500 text-white' : 'bg-shell text-ink'
@@ -415,7 +435,7 @@ export function InferenceStepsCard({ result, totalRules }: { result: InferenceRe
       </ol>
       <Link
         to="/metodologia"
-        className="mt-auto flex min-h-12 items-center justify-center rounded-full bg-ink text-sm font-medium text-white transition-colors hover:bg-[#2a2826]"
+        className="pressable focus-ring mt-auto flex min-h-12 items-center justify-center rounded-full bg-ink text-sm font-medium text-white hover:bg-[#2a2826]"
       >
         Ver la metodología completa
       </Link>
@@ -443,7 +463,7 @@ export function PipelineStrip({ step, done }: { step: number; done: boolean }) {
           <span
             key={name}
             className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-              complete ? 'bg-ink text-white' : current ? 'bg-ember-500 text-white' : 'border border-line text-muted'
+              complete ? 'bg-ink text-white' : current ? 'animate-pulse bg-ember-500 text-white shadow-[0_0_0_4px_rgba(232,148,111,0.16)]' : 'border border-line text-muted'
             }`}
           >
             {complete ? <Check size={12} /> : current ? <LoaderCircle size={12} className="animate-spin" /> : <span className="tabular-nums">{index + 1}</span>}

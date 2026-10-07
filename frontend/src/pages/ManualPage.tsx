@@ -1,4 +1,4 @@
-import { ArrowRight, MapPin, RotateCcw } from 'lucide-react'
+import { ArrowRight, Check, LoaderCircle, MapPin, RotateCcw } from 'lucide-react'
 import { useState } from 'react'
 import { DEFAULT_INPUTS, VARIABLES, type InputKey } from '../app/constants'
 import { useAppContext } from '../app/AppContext'
@@ -17,6 +17,19 @@ export function ManualPage() {
   const [error, setError] = useState<string | null>(null)
   const { pipeline, start, play, reset } = usePipelineAnimation()
   const running = pipeline?.running ?? false
+  const actionLabel = !pipeline
+    ? 'Calcular nivel preventivo'
+    : running
+      ? pipeline.step <= 0
+        ? 'Preparando datos…'
+        : pipeline.step === 1
+          ? 'Fuzzificando…'
+          : pipeline.step <= 3
+            ? 'Evaluando reglas…'
+            : pipeline.step <= 5
+              ? 'Calculando centroide…'
+              : 'Generando resultado…'
+      : 'Resultado listo'
 
   function updateInput(key: InputKey, value: number) {
     setInputs((current) => ({ ...current, [key]: value }))
@@ -70,10 +83,10 @@ export function ManualPage() {
               type="button"
               onClick={() => void submit()}
               disabled={running}
-              className="inline-flex max-w-full items-center gap-3 rounded-full bg-ember-500 py-3 pl-6 pr-5 text-sm font-medium text-white shadow-[0_8px_24px_-10px_rgba(226,96,58,0.9)] transition-colors hover:bg-ember-600 disabled:opacity-60 sm:gap-6"
+              className="pressable focus-ring inline-flex min-w-[238px] max-w-full items-center justify-between gap-3 rounded-full bg-ember-500 py-3 pl-6 pr-5 text-sm font-medium text-white shadow-[0_8px_24px_-10px_rgba(226,96,58,0.9)] hover:bg-ember-600 disabled:cursor-wait disabled:opacity-80 sm:gap-6"
             >
-              {running ? 'Evaluando…' : 'Calcular nivel preventivo'}
-              <ArrowRight size={18} />
+              {actionLabel}
+              {running ? <LoaderCircle size={18} className="animate-spin" /> : result ? <Check size={18} /> : <ArrowRight size={18} />}
             </button>
             <button
               type="button"
@@ -81,13 +94,13 @@ export function ManualPage() {
               disabled={running}
               title="Restablecer valores por defecto"
               aria-label="Restablecer valores por defecto"
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-line bg-white transition-colors hover:bg-[#f0f0f0] disabled:opacity-60"
+              className="pressable focus-ring flex h-12 w-12 items-center justify-center rounded-full border border-line bg-white shadow-[0_8px_20px_-16px_rgba(22,21,20,0.4)] hover:bg-[#f0f0f0] disabled:opacity-60"
             >
               <RotateCcw size={17} />
             </button>
             </div>
           </div>
-          <aside className="hidden w-[470px] shrink-0 overflow-hidden rounded-[28px] border border-line bg-white xl:grid xl:grid-cols-[145px_1fr]">
+          <aside className="hidden w-[470px] shrink-0 overflow-hidden rounded-[28px] border border-line bg-white shadow-[0_18px_40px_-32px_rgba(22,21,20,0.4)] transition-shadow duration-300 hover:shadow-[0_24px_48px_-30px_rgba(22,21,20,0.46)] xl:grid xl:grid-cols-[145px_1fr]">
             <div
               className="relative min-h-[210px] overflow-hidden bg-[linear-gradient(145deg,#14352f,#2b5b4f)] text-white"
               role="img"
@@ -122,7 +135,7 @@ export function ManualPage() {
                   href="https://www.gob.pe/institucion/contraloria/noticias/1078508-contraloria-entidades-publicas-de-amazonas-carecen-de-plan-de-contingencia-ante-incendios-forestales"
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-0.5 block text-[10px] leading-snug text-muted underline decoration-line underline-offset-2 hover:text-ink"
+                  className="focus-ring mt-0.5 block rounded text-[10px] leading-snug text-muted underline decoration-line underline-offset-2 transition-colors hover:text-ink"
                 >
                   Provincia de Chachapoyas · hasta 29 sep. 2024
                 </a>
@@ -134,7 +147,7 @@ export function ManualPage() {
                     href="https://portal.indeci.gob.pe/emergencias/reporte-complementario-n-11654-3-9-2026-coen-indeci-1531-horas-reporte-n-1-incendio-forestal-en-el-distrito-de-chachapoyas-amazonas/"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[10px] leading-snug text-ink underline decoration-line underline-offset-2 hover:text-ember-600"
+                    className="focus-ring rounded text-[10px] leading-snug text-ink underline decoration-line underline-offset-2 transition-colors hover:text-ember-600"
                   >
                     3 sep. · Chachapoyas: daños a la cobertura natural
                   </a>
@@ -142,7 +155,7 @@ export function ManualPage() {
                     href="https://portal.indeci.gob.pe/emergencias/reporte-complementario-n-10471-13-8-2026-coen-indeci-2250-horas-reporte-n-o-1-incendio-forestal-en-el-distrito-de-chachapoyas-amazonas/"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[10px] leading-snug text-ink underline decoration-line underline-offset-2 hover:text-ember-600"
+                    className="focus-ring rounded text-[10px] leading-snug text-ink underline decoration-line underline-offset-2 transition-colors hover:text-ember-600"
                   >
                     13 ago. · Chachapoyas: incendio con daños a cobertura natural
                   </a>

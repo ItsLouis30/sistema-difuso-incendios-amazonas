@@ -29,12 +29,12 @@ export function InferenceDashboard({ inputs, result, onInputChange, pipeline }: 
     <div className="flex flex-col gap-4 px-4 pb-7 pt-5 md:px-6">
       <div className="flex flex-wrap gap-4">
         {ready && result && (
-          <div className="min-w-0 flex-[1_1_380px]">
+          <div className="result-stage min-w-0 flex-[1_1_380px]">
             <ResultHeroCard result={result} />
           </div>
         )}
         {inputs && (
-          <div className="grid min-w-0 flex-[2_1_560px] grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className={`grid min-w-0 flex-[2_1_560px] grid-cols-1 sm:grid-cols-2 gap-4 ${ready ? 'result-stage result-stage-2' : ''}`}>
             {VARIABLES.map((variable) => (
               <VariableCard
                 key={variable.key}
@@ -49,7 +49,7 @@ export function InferenceDashboard({ inputs, result, onInputChange, pipeline }: 
         )}
       </div>
 
-      {ready && result && <ResultExplanationCard result={result} totalRules={totalRules} />}
+      {ready && result && <div className="result-stage result-stage-2"><ResultExplanationCard result={result} totalRules={totalRules} /></div>}
 
       {!ready || !result ? (
         <EmptyResultCard
@@ -57,12 +57,12 @@ export function InferenceDashboard({ inputs, result, onInputChange, pipeline }: 
         />
       ) : (
         <>
-          <div className="flex flex-wrap gap-4 [&>*]:min-w-0">
+          <div className="result-stage result-stage-3 flex flex-wrap gap-4 [&>*]:min-w-0">
             <div className="flex-[2_1_520px] [&>*]:h-full"><AggregatedCurveCard result={result} /></div>
             <div className="flex-[1_1_300px] [&>*]:h-full"><OutputMembershipCard result={result} /></div>
             <div className="flex-[0_1_220px] [&>*]:h-full"><DryDaysCard result={result} /></div>
           </div>
-          <div className="flex flex-wrap gap-4 [&>*]:min-w-0">
+          <div className="result-stage result-stage-3 flex flex-wrap gap-4 [&>*]:min-w-0">
             <div className="flex-[2_1_520px] [&>*]:h-full"><RulesCard result={result} totalRules={totalRules} /></div>
             <div className="flex-[1_1_320px] [&>*]:h-full"><InferenceStepsCard result={result} totalRules={totalRules} /></div>
           </div>
