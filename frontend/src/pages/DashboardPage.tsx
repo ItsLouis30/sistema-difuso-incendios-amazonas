@@ -159,7 +159,7 @@ export function DashboardPage() {
 
       {bootError && <ErrorState message={bootError} />}
 
-      <div className="max-w-4xl mx-auto space-y-8 mt-8">
+      <div className="w-full space-y-8 mt-8">
         <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
           <div className="mb-8 text-center">
             <h2 className="text-2xl font-black text-gray-900">{mode === 'manual' ? 'Configuración de variables' : 'Selección de fecha'}</h2>
@@ -240,10 +240,12 @@ export function DashboardPage() {
               <InferencePipeline currentStep={7} isComplete={true} />
             </div>
 
-            <ResultPanel result={result} />
-            
-            <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
-               <Explainability result={result} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+              <ResultPanel result={result} />
+              
+              <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm sticky top-8">
+                 <Explainability result={result} />
+              </div>
             </div>
           </div>
         )}

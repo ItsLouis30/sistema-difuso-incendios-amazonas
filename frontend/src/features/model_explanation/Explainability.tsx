@@ -8,7 +8,7 @@ function ruleText(rule: ActiveRule) {
     const term = rule.antecedentes[variable.key]
     return `${variable.shortLabel} es ${TERM_LABELS[term] ?? term}`
   })
-  return `SI ${parts.join(' • Y • ')} → ENTONCES nivel ${TERM_LABELS[rule.consecuente] ?? rule.consecuente}`
+  return `SI ${parts.join(' — Y — ')} ➔ ENTONCES nivel ${TERM_LABELS[rule.consecuente] ?? rule.consecuente}`
 }
 
 export function Explainability({ result }: { result: InferenceResponse }) {
@@ -22,7 +22,7 @@ export function Explainability({ result }: { result: InferenceResponse }) {
           <h2 className="text-xl font-bold text-gray-900">¿Por qué se obtuvo este resultado?</h2>
           <p className="text-sm text-gray-500 mt-1">El motor combina las etiquetas activas. Estas fueron las reglas que más influyeron.</p>
         </div>
-        <span className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-bold">
+        <span className="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-bold shrink-0">
           <Network size={16} /> {result.reglas_activas.length} reglas activas
         </span>
       </div>
@@ -66,8 +66,8 @@ export function Explainability({ result }: { result: InferenceResponse }) {
         <div className="px-5 py-4 border-b border-gray-100 bg-gray-50 flex items-center gap-2 text-sm font-bold text-gray-800">
           <Sigma size={18} className="text-gray-400" /> Contribuciones al resultado
         </div>
-        <div className="divide-y divide-gray-100">
-          {strongest.slice(0, 6).map((rule, index) => (
+        <div className="divide-y divide-gray-100 max-h-[600px] overflow-y-auto custom-scrollbar">
+          {strongest.map((rule, index) => (
             <details className="group" key={rule.numero} open={index === 0}>
               <summary className="flex items-center gap-4 px-5 py-4 cursor-pointer hover:bg-gray-50 transition-colors list-none">
                 <span className="w-10 h-10 rounded-xl bg-gray-100 text-gray-500 font-bold text-xs flex items-center justify-center shrink-0">
@@ -93,11 +93,6 @@ export function Explainability({ result }: { result: InferenceResponse }) {
             </details>
           ))}
         </div>
-        {strongest.length > 6 && (
-          <div className="px-5 py-3 bg-gray-50 text-xs text-gray-500 text-center border-t border-gray-100">
-            Se muestran las 6 reglas más influyentes de {strongest.length} activadas.
-          </div>
-        )}
       </div>
     </div>
   )
