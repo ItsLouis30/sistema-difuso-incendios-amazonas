@@ -12,35 +12,73 @@ export function VariableControl({ info, value, onChange, memberships, readOnly =
   const percentage = ((value - info.minimum) / (info.maximum - info.minimum)) * 100
   const activeTerms = Object.entries(memberships ?? {}).filter(([, degree]) => degree > 0).sort((a, b) => b[1] - a[1])
   const inputId = `input-${info.key}`
+
   return (
-    <article className="variable-card">
-      <div className="variable-card-head">
-        <span className="variable-icon"><info.Icon size={19} /></span>
-        <div><label htmlFor={inputId}>{info.label}</label><span>{info.unit}</span></div>
-        <button className="icon-button" type="button" title={`${info.explanation} ${info.influence}`} aria-label={`Información sobre ${info.label}`}><Info size={16} /></button>
-      </div>
-
-      <div className="value-row">
-        <input id={inputId} className="number-input" type="number" value={value} min={info.minimum} max={info.maximum} step={info.step} readOnly={readOnly} onChange={(event) => onChange?.(Number(event.target.value))} />
-        <span>{info.unit}</span>
-      </div>
-
-      <div className="range-wrap">
-        {!readOnly && <input aria-label={`Ajustar ${info.label}`} type="range" min={info.minimum} max={info.maximum} step={info.step} value={value} onChange={(event) => onChange?.(Number(event.target.value))} style={{ '--range-progress': `${percentage}%` } as React.CSSProperties} />}
-        {readOnly && <div className="readonly-range"><span style={{ width: `${Math.max(0, Math.min(100, percentage))}%` }} /></div>}
-        <div className="range-labels"><span>{info.minimum}</span><span>{info.maximum} {info.unit}</span></div>
-      </div>
-
-      <p className="variable-help">{info.explanation}</p>
-      <div className="membership-summary">
-        {activeTerms.length ? activeTerms.map(([term, degree]) => (
-          <div className="membership-row" key={term}>
-            <span>{TERM_LABELS[term] ?? term}</span>
-            <div className="membership-bar"><i style={{ width: `${degree * 100}%` }} /></div>
-            <strong>{formatNumber(degree, 3)}</strong>
+    <div className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm flex flex-col gap-4 relative overflow-hidden transition-all hover:shadow-md">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <info.Icon size={20} strokeWidth={2.5} />
           </div>
-        )) : <span className="membership-placeholder">Se calculará su pertenencia lingüística</span>}
+          <div>
+            <label htmlFor={inputId} className="block text-sm font-bold text-gray-800">{info.label}</label>
+            <span className="text-xs text-gray-500 font-medium">{info.unit}</span>
+          </div>
+        </div>
+        <button className="text-gray-400 hover:text-emerald-600 transition-colors" title={`${info.explanation} ${info.influence}`}>
+          <Info size={18} />
+        </button>
       </div>
-    </article>
+
+      <div className="flex items-center gap-2">
+        <input
+          id={inputId}
+          className="w-24 text-2xl font-bold text-gray-900 bg-transparent border-none p-0 focus:ring-0 focus:outline-none"
+          type="number"
+          value={value}
+          min={info.minimum}
+          max={info.maximum}
+          step={info.step}
+          readOnly={readOnly}
+          onChange={(event) => onChange?.(Number(event.target.value))}
+        />
+      </div>
+
+      <div className="relative pt-2 pb-1">
+        {!readOnly ? (
+          <input
+            type="range"
+            min={info.minimum}
+            max={info.maximum}
+            step={info.step}
+            value={value}
+            onChange={(event) => onChange?.(Number(event.target.value))}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-600/30"
+          />
+        ) : (
+          <div className="w-full h-2 bg-gray-200 rounded-lg overflow-hidden">
+            <div className="h-full bg-emerald-600" style={{ width: `${Math.max(0, Math.min(100, percentage))}%` }} />
+          </div>
+        )}
+        <div className="flex justify-between mt-2 text-xs text-gray-400 font-medium">
+          <span>{info.minimum}</span>
+          <span>{info.maximum} {info.unit}</span>
+        </div>
+      </div>
+
+      <div className="mt-2 pt-4 border-t border-gray-100 flex flex-col gap-2">
+        {activeTerms.length ? activeTerms.map(([term, degree]) => (
+          <div key={term} className="flex items-center justify-between text-xs">
+            <span className="font-medium text-gray-600">{TERM_LABELS[term] ?? term}</span>
+            <div className="flex-1 mx-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-full bg-teal-500" style={{ width: `${degree * 100}%` }} />
+            </div>
+            <strong className="text-gray-800">{formatNumber(degree, 3)}</strong>
+          </div>
+        )) : (
+          <span className="text-xs text-gray-400 italic">Pertenencia calculada tras evaluar</span>
+        )}
+      </div>
+    </div>
   )
 }
