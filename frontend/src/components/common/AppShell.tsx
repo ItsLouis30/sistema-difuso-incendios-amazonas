@@ -15,7 +15,7 @@ import { useAppContext } from '../../app/AppContext'
 const navItems = [
   { to: '/', label: 'Evaluación', Icon: LayoutDashboard, end: true },
   { to: '/historial', label: 'Historial', Icon: ChartNoAxesCombined },
-  { to: '/metodología', label: 'Metodología', Icon: BookOpenText },
+  { to: '/metodologia', label: 'Metodología', Icon: BookOpenText },
 ]
 
 export function AppShell() {
