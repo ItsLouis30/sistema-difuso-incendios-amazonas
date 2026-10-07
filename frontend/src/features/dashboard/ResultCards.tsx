@@ -112,14 +112,14 @@ export function ResultHeroCard({ result }: { result: InferenceResponse }) {
         </div>
       </div>
 
-      <div className="rounded-[22px] border border-white/10 bg-white/[0.04] p-4">
+      <div className="flex min-h-[150px] flex-1 flex-col justify-center rounded-[22px] border border-white/10 bg-white/[0.04] p-5">
         <span className="flex items-center gap-2 text-xs font-medium text-[#d8d3cf]">
           <Info size={15} className="text-ember-300" /> ¿Qué significa?
         </span>
-        <p className="mt-2 text-[13px] leading-relaxed text-[#bdb8b3]">{CATEGORY_MEANINGS[code]}</p>
+        <p className="mt-3 text-sm leading-7 text-[#c9c4bf]">{CATEGORY_MEANINGS[code]}</p>
       </div>
 
-      <div className="mt-auto flex items-start gap-3.5 rounded-[22px] bg-[#232120] p-4">
+      <div className="flex items-start gap-3.5 rounded-[22px] bg-[#232120] p-4">
         <Sunburst />
         <div className="min-w-0">
           <span className="text-xs text-[#bdb8b3]">Acción recomendada</span>
