@@ -53,7 +53,7 @@ export function HistoricalPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-12">
+    <div className="max-w-[1600px] mx-auto space-y-8 pb-12">
       <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white shadow-xl mb-8">
         <div className="absolute inset-0 bg-gradient-to-br from-[#1e3a8a] via-[#172554] to-[#020617]"></div>
         

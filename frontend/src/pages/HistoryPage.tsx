@@ -52,7 +52,7 @@ export function HistoryPage() {
   }, [series])
 
   return (
-    <div className="max-w-7xl mx-auto pb-12">
+    <div className="max-w-[1600px] mx-auto pb-12">
       <PageHeader
         eyebrow="Serie histórica • ERA5 / ERA5-Land"
         title="Evolución del índice preventivo"
