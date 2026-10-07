@@ -5,16 +5,16 @@ import {
   Leaf,
   LayoutDashboard,
   LogOut,
-  Bell,
-  Grid,
-  Search
+  CalendarDays,
+  SlidersHorizontal
 } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAppContext } from '../../app/AppContext'
 
 const navItems = [
-  { to: '/', label: 'Evaluación', Icon: LayoutDashboard, end: true },
-  { to: '/historial', label: 'Historial', Icon: ChartNoAxesCombined },
+  { to: '/manual', label: 'Modo Manual', Icon: SlidersHorizontal },
+  { to: '/historico', label: 'Modo Histórico', Icon: CalendarDays },
+  { to: '/historial', label: 'Tendencias', Icon: ChartNoAxesCombined },
   { to: '/metodologia', label: 'Metodología', Icon: BookOpenText },
 ]
 
@@ -41,11 +41,10 @@ export function AppShell() {
           <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
             Plataforma
           </div>
-          {navItems.map(({ to, label, Icon, end }) => (
+          {navItems.map(({ to, label, Icon }) => (
             <NavLink
               key={to}
               to={to}
-              end={end}
               className={({ isActive }) =>
                 `flex items-center gap-4 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
                   isActive
@@ -95,11 +94,10 @@ export function AppShell() {
 
       {/* Mobile Nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around p-3 pb-safe z-50">
-        {navItems.map(({ to, label, Icon, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
+          {navItems.map(({ to, label, Icon }) => (
+            <NavLink
+              key={to}
+              to={to}
             className={({ isActive }) =>
               `flex flex-col items-center gap-1 p-2 rounded-lg text-xs font-medium ${
                 isActive ? 'text-emerald-600' : 'text-gray-500'

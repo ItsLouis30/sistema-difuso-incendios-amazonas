@@ -1,7 +1,6 @@
-import { CalendarDays, Database, Info, Play, RotateCcw, SlidersHorizontal, AlertTriangle, ShieldAlert, CheckCircle2, AlertCircle, Globe } from 'lucide-react'
+import { Info, Play, SlidersHorizontal, AlertTriangle, ShieldAlert, CheckCircle2, AlertCircle, Globe } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { DEFAULT_INPUTS, VARIABLES, type InputKey } from '../app/constants'
-import { formatDate } from '../app/format'
 import { useAppContext } from '../app/AppContext'
 import { ErrorState, LoadingState } from '../components/common/Feedback'
 import { VariableControl } from '../features/manual_inference/VariableControl'
@@ -11,13 +10,9 @@ import { ResultPanel, ResultPlaceholder } from '../features/model_explanation/Re
 import { api } from '../services/api/client'
 import type { InferenceRequest, InferenceResponse } from '../types/api'
 
-type Mode = 'manual' | 'historical'
-
-export function DashboardPage() {
-  const { historyRange, model, bootError } = useAppContext()
-  const [mode, setMode] = useState<Mode>('manual')
+export function ManualPage() {
+  const { bootError } = useAppContext()
   const [inputs, setInputs] = useState<InferenceRequest>(DEFAULT_INPUTS)
-  const [selectedDate, setSelectedDate] = useState('2025-09-01')
   const [result, setResult] = useState<InferenceResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -38,10 +33,7 @@ export function DashboardPage() {
     void executeManual(DEFAULT_INPUTS)
   }, [executeManual])
 
-  const visibleInputs = useMemo(
-    () => result?.modo === 'historical' ? result.entradas : inputs,
-    [inputs, result],
-  )
+  const visibleInputs = inputs
 
   function updateInput(key: InputKey, value: number) {
     setInputs((current) => ({ ...current, [key]: value }))
@@ -52,11 +44,11 @@ export function DashboardPage() {
       const value = inputs[variable.key]
       return !Number.isFinite(value) || value < variable.minimum || value > variable.maximum
     })
-    if (mode === 'manual' && invalid) {
+    if (invalid) {
       setError(`${invalid.label} debe estar entre ${invalid.minimum} y ${invalid.maximum} ${invalid.unit}.`)
       return
     }
-    if (mode === 'manual' && !Number.isInteger(inputs.dias_secos)) {
+    if (!Number.isInteger(inputs.dias_secos)) {
       setError('Los días secos deben ingresarse como un número entero.')
       return
     }
@@ -67,7 +59,7 @@ export function DashboardPage() {
     setHasCalculated(false)
     
     try {
-      const res = mode === 'manual' ? await api.manualInference(inputs) : await api.historicalInference(selectedDate)
+      const res = await api.manualInference(inputs)
       setResult(res)
       
       let step = 0
@@ -89,16 +81,6 @@ export function DashboardPage() {
     }
   }
 
-  function changeMode(nextMode: Mode) {
-    setMode(nextMode)
-    setResult(null)
-    setError(null)
-    setHasCalculated(false)
-    if (nextMode === 'manual') {
-      void executeManual(inputs)
-    }
-  }
-
   return (
     <div className="max-w-7xl mx-auto space-y-8 pb-12">
       <div className="relative overflow-hidden rounded-3xl bg-slate-900 text-white shadow-xl mb-8">
@@ -117,11 +99,11 @@ export function DashboardPage() {
           </div>
 
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight max-w-4xl mb-4 leading-tight">
-            Preparación Preventiva ante <span className="text-amber-400">Incendios Forestales</span>
+            Simulador <span className="text-amber-400">Manual</span>
           </h1>
 
           <p className="text-base md:text-lg text-teal-100/80 font-medium max-w-3xl mb-6 leading-relaxed">
-            Diagnóstico preliminar y modelado de riesgo utilizando lógica difusa Mamdani ajustado específicamente a las condiciones meteorológicas y el ecosistema de la región Amazonas.
+            Modo interactivo para simular el riesgo. Ajusta cada variable climática para entender cómo reacciona el Sistema de Inferencia Difusa Mamdani frente a distintos escenarios ficticios o supuestos.
           </p>
 
           <div className="flex flex-wrap justify-center items-center gap-3 px-5 py-2.5 rounded-full bg-black/40 border border-white/10 backdrop-blur-md text-sm font-medium text-gray-200">
@@ -140,53 +122,14 @@ export function DashboardPage() {
         </div>
       </div>
 
-      <div className="flex justify-center mb-8">
-        <div className="inline-flex bg-white rounded-xl shadow-sm border border-gray-200 p-1">
-          <button 
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-colors ${mode === 'manual' ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20' : 'text-gray-600 hover:bg-gray-50'}`}
-            onClick={() => changeMode('manual')}
-          >
-            <SlidersHorizontal size={18} /> Modo Manual
-          </button>
-          <button 
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold transition-colors ${mode === 'historical' ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20' : 'text-gray-600 hover:bg-gray-50'}`}
-            onClick={() => changeMode('historical')}
-          >
-            <CalendarDays size={18} /> Modo Histórico
-          </button>
-        </div>
-      </div>
-
       {bootError && <ErrorState message={bootError} />}
 
       <div className="w-full space-y-8 mt-8">
         <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-100 shadow-sm">
           <div className="mb-8 text-center">
-            <h2 className="text-2xl font-black text-gray-900">{mode === 'manual' ? 'Configuración de variables' : 'Selección de fecha'}</h2>
-            <p className="text-sm text-gray-500 mt-2">{mode === 'manual' ? 'Ajusta los valores de las entradas crisp para simular el riesgo.' : 'Recupera datos meteorológicos históricos.'}</p>
+            <h2 className="text-2xl font-black text-gray-900">Configuración de variables</h2>
+            <p className="text-sm text-gray-500 mt-2">Desliza los valores de las entradas crisp para simular el nivel de riesgo.</p>
           </div>
-
-          {mode === 'historical' && (
-            <div className="flex flex-col sm:flex-row sm:items-center justify-center gap-4 p-5 bg-gray-50 rounded-xl mb-8 border border-gray-100 max-w-xl mx-auto">
-              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-gray-500 shadow-sm shrink-0">
-                <CalendarDays size={24} />
-              </div>
-              <div className="flex-1">
-                <label htmlFor="historical-date" className="block text-sm font-bold text-gray-700">Fecha de consulta</label>
-                <span className="text-xs text-gray-500">Disp: {historyRange ? `${formatDate(historyRange.fecha_inicial)} - ${formatDate(historyRange.fecha_final)}` : '2000-2025'}</span>
-              </div>
-              <input 
-                id="historical-date" 
-                type="date" 
-                className="px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:outline-none bg-white font-medium text-gray-800"
-                value={selectedDate} 
-                min={historyRange?.fecha_inicial ?? '2000-01-01'} 
-                max={historyRange?.fecha_final ?? '2025-12-31'} 
-                onChange={(event) => setSelectedDate(event.target.value)} 
-                disabled={calculating}
-              />
-            </div>
-          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {VARIABLES.map((variable) => (
@@ -196,7 +139,7 @@ export function DashboardPage() {
                 value={visibleInputs[variable.key]}
                 onChange={(value) => updateInput(variable.key, value)}
                 memberships={result?.pertenencias_entrada[variable.key]}
-                readOnly={mode === 'historical' || calculating}
+                readOnly={calculating}
               />
             ))}
           </div>
@@ -204,16 +147,14 @@ export function DashboardPage() {
           {error && <div className="mt-8"><ErrorState message={error} /></div>}
 
           <div className="flex flex-col items-center justify-center gap-4 mt-10 pt-8 border-t border-gray-100">
-            {mode === 'manual' && (
-              <button 
-                className="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors"
-                type="button" 
-                onClick={() => { setInputs(DEFAULT_INPUTS); setHasCalculated(false); void executeManual(DEFAULT_INPUTS); }}
-                disabled={calculating}
-              >
-                Restablecer valores por defecto
-              </button>
-            )}
+            <button 
+              className="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors"
+              type="button" 
+              onClick={() => { setInputs(DEFAULT_INPUTS); setHasCalculated(false); void executeManual(DEFAULT_INPUTS); }}
+              disabled={calculating}
+            >
+              Restablecer valores por defecto
+            </button>
             <button 
               className="flex items-center justify-center gap-2 px-8 py-4 w-full md:w-auto md:min-w-[300px] rounded-2xl font-black text-lg text-white bg-emerald-600 hover:bg-emerald-700 shadow-xl shadow-emerald-600/30 transition-all disabled:opacity-50"
               type="button" 
@@ -221,7 +162,7 @@ export function DashboardPage() {
               disabled={loading || calculating}
             >
               <Play size={20} fill="currentColor" /> 
-              {calculating ? 'Evaluando...' : mode === 'manual' ? 'Calcular Nivel' : 'Evaluar Fecha'}
+              {calculating ? 'Evaluando...' : 'Calcular Nivel de Riesgo'}
             </button>
           </div>
         </div>
