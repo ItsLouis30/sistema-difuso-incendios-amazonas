@@ -1,4 +1,4 @@
-import { BookOpenText, CalendarDays, ChartNoAxesCombined, Flame, Leaf, ListTree, SlidersHorizontal } from 'lucide-react'
+import { BookOpenText, CalendarDays, ChartNoAxesCombined, CloudSun, Flame, ListTree, SlidersHorizontal } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 import { useAppContext } from '../../app/AppContext'
 
@@ -31,7 +31,7 @@ export function AppShell() {
               <strong className="block font-display text-lg font-semibold">Sistema Difuso</strong>
               <span className="text-sm text-muted">Incendios forestales · Chachapoyas, Amazonas</span>
               <span className="mt-1.5 flex w-fit items-center gap-1.5 rounded-full bg-[#e9f3e8] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.06em] text-[#356b3a]">
-                ODS 13 · Acción por el clima
+                <CloudSun size={11} aria-hidden /> ODS 13 · Acción por el clima
               </span>
             </span>
           </div>

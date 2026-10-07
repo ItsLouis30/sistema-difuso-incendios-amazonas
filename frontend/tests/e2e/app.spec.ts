@@ -4,7 +4,7 @@ import { resultCard, runManualInference, setManualInputs } from './helpers'
 test('ejecuta una inferencia manual completa desde la interfaz', async ({ page }) => {
   await page.goto('/manual')
   await expect(page.getByText('API conectada')).toBeVisible()
-  await expect(page.getByText('Alineado con ODS 13 · Acción por el clima')).toBeVisible()
+  await expect(page.getByText('Proyecto alineado con ODS 13 · Acción por el clima')).toBeVisible()
   await expect(resultCard(page)).toHaveCount(0)
   await expect(page.getByText('Ejecuta una evaluación para ver el índice, sus reglas y la explicación.')).toBeVisible()
   await expect(page.getByText('Punto geográfico de referencia')).toBeVisible()

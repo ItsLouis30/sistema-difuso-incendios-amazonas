@@ -1,4 +1,4 @@
-import { Binary, BookOpen, CloudRain, Database, GitMerge, Layers3, Leaf, Satellite, Scale, ShieldCheck, Sigma, Target } from 'lucide-react'
+import { Binary, BookOpen, CloudRain, CloudSun, Database, GitMerge, Layers3, Satellite, Scale, ShieldCheck, Sigma, Target } from 'lucide-react'
 import { TERM_LABELS, VARIABLES } from '../app/constants'
 import { useAppContext } from '../app/AppContext'
 import { Card, CardTitle, HeroBand, IconCircle, Pill } from '../components/common/Bento'
@@ -40,7 +40,7 @@ export function MethodologyPage() {
             <Pill tone="dark" className="px-4! py-2! text-sm!">Modelo v{model?.version ?? '1.1.0'}</Pill>
             <Pill className="px-4! py-2! text-sm!">{model?.total_reglas ?? 192} reglas</Pill>
             <Pill className="px-4! py-2! text-sm!">Mamdani · mín–mín–máx · centroide</Pill>
-            <Pill className="border-[#bcd8bc]! bg-[#e9f3e8]! px-4! py-2! text-sm! text-[#356b3a]!"><Leaf size={14} /> ODS 13</Pill>
+            <Pill className="border-[#bcd8bc]! bg-[#e9f3e8]! px-4! py-2! text-sm! text-[#356b3a]!"><CloudSun size={14} /> ODS 13</Pill>
           </>
         }
         title="Así razona el sistema."
@@ -52,7 +52,7 @@ export function MethodologyPage() {
           <div className="grid gap-5 lg:grid-cols-[1.15fr_1fr] lg:items-center">
             <div className="flex items-start gap-4">
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#3f7e44] text-white shadow-[0_12px_28px_-16px_rgba(63,126,68,0.8)]">
-                <Leaf size={22} aria-hidden />
+                <CloudSun size={22} aria-hidden />
               </span>
               <div>
                 <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-[#3f7e44]">Objetivo de Desarrollo Sostenible</span>
