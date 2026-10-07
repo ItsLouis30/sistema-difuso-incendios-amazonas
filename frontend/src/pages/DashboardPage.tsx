@@ -110,20 +110,21 @@ export function DashboardPage() {
            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-auto text-white" fill="currentColor"><path d="M0,256L48,229.3C96,203,192,149,288,154.7C384,160,480,224,576,218.7C672,213,768,139,864,128C960,117,1056,171,1152,197.3C1248,224,1344,224,1392,224L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>
         </div>
 
-        <div className="relative z-10 px-6 py-20 md:py-24 flex flex-col items-center text-center">
-          <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-teal-500/30 bg-teal-900/30 text-teal-300 text-xs font-bold tracking-widest uppercase mb-6 backdrop-blur-sm">
-            Sistema de Inferencia Difusa &bull; Prevención de Riesgos
+        <div className="relative z-10 px-6 py-8 md:py-10 flex flex-col items-center text-center">
+          <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-teal-500/30 bg-teal-900/30 text-teal-300 text-xs font-bold tracking-widest uppercase mb-4 backdrop-blur-sm gap-2">
+            <Globe className="w-3.5 h-3.5" />
+            Chachapoyas, Amazonas &bull; Perú
           </div>
 
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-white tracking-tight max-w-4xl mb-6">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight max-w-4xl mb-4 leading-tight">
             Preparación Preventiva ante <span className="text-amber-400">Incendios Forestales</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-teal-100/80 font-medium max-w-3xl mb-10 leading-relaxed">
-            Diagnóstico preliminar y modelado de riesgo utilizando lógica difusa Mamdani para apoyar la toma de decisiones ambientales.
+          <p className="text-base md:text-lg text-teal-100/80 font-medium max-w-3xl mb-6 leading-relaxed">
+            Diagnóstico preliminar y modelado de riesgo utilizando lógica difusa Mamdani ajustado específicamente a las condiciones meteorológicas y el ecosistema de la región Amazonas.
           </p>
 
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-black/40 border border-white/10 backdrop-blur-md text-sm font-medium text-gray-200">
+          <div className="flex flex-wrap justify-center items-center gap-3 px-5 py-2.5 rounded-full bg-black/40 border border-white/10 backdrop-blur-md text-sm font-medium text-gray-200">
             <div className="flex items-center gap-2">
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
@@ -131,10 +132,10 @@ export function DashboardPage() {
               </span>
               <span className="text-green-400 font-bold">En línea</span>
             </div>
-            <span className="text-white/30">&bull;</span>
-            <span>Sistema Inteligente</span>
-            <span className="text-white/30">&bull;</span>
-            <span className="flex items-center gap-1.5"><Globe className="w-4 h-4 text-blue-400"/> ODS 13: Acción por el Clima</span>
+            <span className="text-white/30 hidden sm:inline">&bull;</span>
+            <span>Sistema Inferencia Difusa</span>
+            <span className="text-white/30 hidden sm:inline">&bull;</span>
+            <span className="flex items-center gap-1.5 text-amber-300/90"><Globe className="w-4 h-4" /> ODS 13: Acción por el Clima</span>
           </div>
         </div>
       </div>

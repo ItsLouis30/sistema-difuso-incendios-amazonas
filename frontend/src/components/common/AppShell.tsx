@@ -80,35 +80,15 @@ export function AppShell() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Topbar */}
-        <header className="h-20 bg-[#F4F6F8] flex items-center justify-between px-8 z-0">
-          <div className="relative w-96 hidden sm:block">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Buscar..." 
-              className="w-full pl-11 pr-4 py-2.5 bg-white border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 shadow-sm"
-            />
-          </div>
-          <div className="sm:hidden font-bold text-lg text-gray-900">Sistema Difuso</div>
-          
-          <div className="flex items-center gap-4">
-            <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-600 shadow-sm relative hover:bg-gray-50 border border-gray-200">
-              <Bell size={18} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 border-2 border-white rounded-full"></span>
-            </button>
-            <div className="flex items-center gap-2 bg-white rounded-full p-1.5 shadow-sm pr-4 border border-gray-200">
-              <button className="w-8 h-8 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-50">
-                <Grid size={16} />
-              </button>
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-xs">
-                U
-              </div>
-            </div>
+        {/* Mobile Topbar */}
+        <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-center md:hidden z-10 shrink-0">
+          <div className="font-bold text-lg text-gray-900 flex items-center gap-2">
+            <Leaf size={18} className="text-emerald-600" />
+            Sistema Difuso
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-4 sm:p-8 pt-2">
+        <main className="flex-1 overflow-auto p-4 sm:p-6 md:p-8">
           <Outlet />
         </main>
       </div>
