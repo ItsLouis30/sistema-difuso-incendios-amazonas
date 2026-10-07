@@ -518,6 +518,13 @@ pnpm test:e2e
 Las cuatro corridas oficiales se regeneran con `pnpm evidence` y están
 documentadas en [`docs/testing/REFERENCE_RUNS.md`](docs/testing/REFERENCE_RUNS.md).
 
+## Despliegue en Render
+
+El repositorio incluye un Blueprint en [`render.yaml`](render.yaml) que crea la
+API FastAPI y el sitio estático React. Las instrucciones de creación, variables,
+verificación y diagnóstico están en
+[`docs/deployment/RENDER.md`](docs/deployment/RENDER.md).
+
 ## Principios para contribuir
 
 - No duplicar parámetros o reglas entre frontend y backend.

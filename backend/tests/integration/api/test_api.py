@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 from starlette.testclient import TestClient
 
@@ -224,6 +225,23 @@ class ApiContractTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.headers["access-control-allow-origin"], "http://localhost:5173"
+        )
+
+    def test_cors_allows_origins_configured_for_deployment(self) -> None:
+        production_origin = "https://sistema-difuso-g8-web.onrender.com"
+        with patch.dict("os.environ", {"CORS_ORIGINS": production_origin}):
+            client = TestClient(create_app())
+            response = client.options(
+                "/api/v1/inferences",
+                headers={
+                    "Origin": production_origin,
+                    "Access-Control-Request-Method": "POST",
+                },
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.headers["access-control-allow-origin"], production_origin
         )
 
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -16,6 +17,16 @@ DEFAULT_CONFIG_DIRECTORY = REPOSITORY_ROOT / "config" / "fuzzy_model" / "v1"
 DEFAULT_DATASET_PATH = (
     REPOSITORY_ROOT / "data" / "processed" / "weather_inputs_2000_2025.csv"
 )
+
+
+def _cors_origins() -> list[str]:
+    local_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+    configured = [
+        origin.strip().rstrip("/")
+        for origin in os.getenv("CORS_ORIGINS", "").split(",")
+        if origin.strip()
+    ]
+    return list(dict.fromkeys([*local_origins, *configured]))
 
 
 def create_app(
@@ -38,7 +49,7 @@ def create_app(
     )
     application.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+        allow_origins=_cors_origins(),
         allow_credentials=True,
         allow_methods=["GET", "POST", "OPTIONS"],
         allow_headers=["Content-Type", "Authorization"],

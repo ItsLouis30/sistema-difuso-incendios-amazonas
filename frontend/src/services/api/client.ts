@@ -7,7 +7,7 @@ import type {
   ModelResponse,
 } from '../../types/api'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? ''
+const API_BASE_URL = (import.meta.env.VITE_API_URL ?? '').replace(/\/+$/, '')
 
 export class ApiError extends Error {
   constructor(
