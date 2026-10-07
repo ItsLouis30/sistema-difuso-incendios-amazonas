@@ -87,15 +87,44 @@ export function ManualPage() {
             </button>
             </div>
           </div>
-          <aside className="hidden w-[220px] shrink-0 items-start gap-3 rounded-3xl border border-line bg-white p-4 xl:flex">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-shell text-ink">
-              <MapPin size={18} />
-            </span>
-            <span className="min-w-0">
-              <span className="block text-[10px] font-semibold uppercase tracking-[0.08em] text-muted">Ámbito del modelo</span>
-              <strong className="mt-1 block text-sm leading-tight text-ink">Chachapoyas, Amazonas</strong>
-              <span className="mt-1 block text-[11px] leading-snug text-muted">Punto geográfico de referencia</span>
-            </span>
+          <aside className="hidden w-[390px] shrink-0 overflow-hidden rounded-[28px] border border-line bg-white xl:grid xl:grid-cols-[138px_1fr]">
+            <div
+              className="relative min-h-[150px] overflow-hidden bg-[linear-gradient(145deg,#14352f,#2b5b4f)] text-white"
+              role="img"
+              aria-label="Referencia geográfica estilizada de Chachapoyas"
+            >
+              <svg viewBox="0 0 138 150" className="absolute inset-0 h-full w-full opacity-55" fill="none" aria-hidden>
+                <path d="M-15 34C18 12 47 16 69 34s50 22 86-1" stroke="#76c79e" strokeWidth="1.2" />
+                <path d="M-18 55C13 34 43 36 65 54s54 25 91 0" stroke="#76c79e" strokeWidth="1.2" />
+                <path d="M-12 78C20 56 48 60 70 77s50 20 84-2" stroke="#76c79e" strokeWidth="1.2" />
+                <path d="M-20 105C16 81 47 84 69 104s51 22 91-5" stroke="#76c79e" strokeWidth="1.2" />
+                <path d="M-8 132C19 111 47 112 68 128s47 21 78 2" stroke="#76c79e" strokeWidth="1.2" />
+                <circle cx="76" cy="70" r="28" stroke="#a7e6c2" strokeWidth="1" />
+                <circle cx="76" cy="70" r="18" stroke="#a7e6c2" strokeWidth="1" />
+              </svg>
+              <span className="absolute left-[58px] top-[49px] flex h-10 w-10 items-center justify-center rounded-full border-2 border-white/80 bg-ember-500 shadow-lg">
+                <MapPin size={18} />
+              </span>
+              <span className="absolute bottom-3 left-3 rounded-full bg-black/25 px-2.5 py-1 text-[9px] font-medium backdrop-blur-sm">
+                6.21° S · 77.87° W
+              </span>
+            </div>
+            <div className="flex min-w-0 flex-col justify-center p-4">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-muted">Ámbito del modelo</span>
+              <strong className="mt-1 text-base leading-tight text-ink">Chachapoyas, Amazonas</strong>
+              <span className="mt-1 text-[11px] leading-snug text-muted">Punto geográfico de referencia</span>
+              <div className="mt-3 border-t border-line pt-3">
+                <strong className="block text-[13px] leading-snug text-ink">6 250 ha afectadas</strong>
+                <a
+                  href="https://www.gob.pe/institucion/contraloria/noticias/1078508-contraloria-entidades-publicas-de-amazonas-carecen-de-plan-de-contingencia-ante-incendios-forestales"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-0.5 block text-[10px] leading-snug text-muted underline decoration-line underline-offset-2 hover:text-ink"
+                >
+                  Provincia de Chachapoyas · hasta 29 sep. 2024
+                </a>
+              </div>
+            </div>
           </aside>
         </div>
       </section>
