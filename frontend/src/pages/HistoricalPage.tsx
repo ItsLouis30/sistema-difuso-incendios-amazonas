@@ -74,7 +74,7 @@ export function HistoricalPage() {
           </h1>
 
           <p className="text-base md:text-lg text-blue-100/80 font-medium max-w-3xl mb-6 leading-relaxed">
-            Modo de consulta temporal. Selecciona una fecha específica del pasado para recuperar de nuestra base de datos (NASA POWER, etc.) los registros meteorológicos reales de ese día y evaluar el nivel de riesgo que existía.
+            Modo de consulta temporal. Selecciona una fecha específica del pasado para recuperar de nuestra base de datos (Copernicus ERA5-Land) los registros meteorológicos reales de ese día y evaluar el nivel de riesgo que existía.
           </p>
 
           <div className="flex flex-wrap justify-center items-center gap-3 px-5 py-2.5 rounded-full bg-black/40 border border-white/10 backdrop-blur-md text-sm font-medium text-gray-200">

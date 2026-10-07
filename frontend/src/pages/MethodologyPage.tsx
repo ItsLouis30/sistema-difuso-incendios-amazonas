@@ -1,4 +1,4 @@
-import { ArrowRight, Binary, Braces, Database, GitMerge, Layers3, Scale, Sigma, Target } from 'lucide-react'
+import { ArrowRight, Binary, Braces, Database, GitMerge, Layers3, Scale, Sigma, Target, CloudRain, Satellite, BookOpen } from 'lucide-react'
 import { TERM_LABELS, VARIABLES } from '../app/constants'
 import { useAppContext } from '../app/AppContext'
 import { PageHeader } from '../components/common/PageHeader'
@@ -32,7 +32,7 @@ export function MethodologyPage() {
           <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 block mb-2">Paso a paso</span>
           <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">El pipeline de evaluación Mamdani</h2>
           <p className="text-gray-500 mt-4 leading-relaxed">
-            Nuestro sistema no es una «caja negra». Utiliza lógica difusa para replicar el razonamiento de un experto forestal, 
+            Nuestro sistema no es una "caja negra". Utiliza lógica difusa para replicar el razonamiento de un experto forestal, 
             permitiendo que las variables tengan grados de verdad en lugar de simples estados binarios.
           </p>
         </div>
@@ -128,6 +128,54 @@ export function MethodologyPage() {
           </div>
         </section>
       </div>
+
+      <section className="bg-white rounded-3xl p-8 lg:p-12 border border-gray-100 shadow-sm">
+        <div className="max-w-3xl mb-10">
+          <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 block mb-2">Fuentes y Referencias</span>
+          <h2 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Origen de los Datos</h2>
+          <p className="text-gray-500 mt-4 leading-relaxed">
+            El modelado de las variables meteorológicas y la evaluación histórica se construyeron utilizando repositorios climáticos de alta fidelidad, garantizando una representación precisa del entorno de Amazonas.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <article className="bg-blue-50 rounded-2xl p-6 border border-blue-100 flex gap-4">
+            <div className="w-12 h-12 rounded-xl bg-white text-blue-600 shadow-sm flex items-center justify-center shrink-0">
+              <Satellite size={24} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Copernicus ERA5 & ERA5-Land</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Proporcionado por el ECMWF (Centro Europeo de Previsiones Meteorológicas a Plazo Medio). Se utilizó para extraer datos reanalizados de humedad superficial del suelo, velocidad del viento y humedad relativa, ofreciendo una resolución espacial sin precedentes.
+              </p>
+            </div>
+          </article>
+          
+          <article className="bg-cyan-50 rounded-2xl p-6 border border-cyan-100 flex gap-4">
+            <div className="w-12 h-12 rounded-xl bg-white text-cyan-600 shadow-sm flex items-center justify-center shrink-0">
+              <CloudRain size={24} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">SENAMHI</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                El Servicio Nacional de Meteorología e Hidrología del Perú es la base principal para validar empíricamente los umbrales de precipitaciones (días secos consecutivos) y correlacionar los patrones climáticos locales en Chachapoyas.
+              </p>
+            </div>
+          </article>
+
+          <article className="bg-emerald-50 md:col-span-2 rounded-2xl p-6 border border-emerald-100 flex gap-4">
+            <div className="w-12 h-12 rounded-xl bg-white text-emerald-600 shadow-sm flex items-center justify-center shrink-0">
+              <BookOpen size={24} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 mb-1">Fundamentos del Modelo Difuso</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Los conjuntos borrosos, las funciones de pertenencia y las reglas del sistema de inferencia (SI-ENTONCES) fueron extraídas y adaptadas a partir de revisiones bibliográficas de modelos preventivos forestales internacionales, ajustando el peso probabilístico mediante la distribución de frecuencias locales observadas en los últimos 20 años.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
     </div>
   )
 }

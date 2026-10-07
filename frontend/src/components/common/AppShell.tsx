@@ -30,7 +30,7 @@ export function AppShell() {
             <div className="bg-emerald-600 text-white p-2 rounded-full shadow-lg shadow-emerald-600/30">
               <Leaf size={24} fill="currentColor" />
             </div>
-            <span className="font-bold text-lg tracking-tight text-gray-900">Sistema Difuso</span>
+            <span className="font-bold text-lg tracking-tight text-gray-900 leading-tight">Sistema Difuso<br/><span className="text-sm font-medium text-emerald-600">Grupo 8</span></span>
           </div>
           <button className="text-emerald-600 bg-emerald-50 p-1 rounded-md">
             <ChevronLeft size={20} />
@@ -60,7 +60,7 @@ export function AppShell() {
         </nav>
 
         <div className="p-4 border-t border-gray-100">
-          <div className={`mb-4 px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-3 ${
+          <div className={`px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-3 ${
             backendOnline === null ? 'bg-gray-100 text-gray-500' : 
             backendOnline ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'
           }`}>
@@ -70,10 +70,6 @@ export function AppShell() {
             }`} />
             {backendOnline === null ? 'Conectando...' : backendOnline ? 'API Conectada' : 'API Desconectada'}
           </div>
-          <button className="flex items-center gap-4 px-4 py-3 text-gray-500 hover:text-gray-900 font-medium w-full rounded-xl hover:bg-gray-50 transition-colors">
-            <LogOut size={20} strokeWidth={2.5} />
-            <span>Salir</span>
-          </button>
         </div>
       </aside>
 
@@ -83,7 +79,7 @@ export function AppShell() {
         <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-center md:hidden z-10 shrink-0">
           <div className="font-bold text-lg text-gray-900 flex items-center gap-2">
             <Leaf size={18} className="text-emerald-600" />
-            Sistema Difuso
+            Sistema Difuso G8
           </div>
         </header>
 
