@@ -308,11 +308,9 @@ El motor difuso está implementado como un módulo independiente de FastAPI. La 
 ├── data/
 │   ├── raw/                              # Respuestas originales inmutables
 │   ├── processed/                        # CSV validado para el sistema
-│   ├── metadata/                         # Fuente y diccionario de datos
-│   └── samples/                          # Muestras ligeras
+│   └── metadata/                         # Fuente y diccionario de datos
 ├── docs/
 │   ├── architecture/                     # Diseño y dependencias
-│   ├── planning/                         # Alcance y decisiones
 │   ├── model/                            # Matemática, BRD y corridas
 │   ├── data/                             # Preparación y calidad
 │   ├── api/                              # Contrato HTTP
