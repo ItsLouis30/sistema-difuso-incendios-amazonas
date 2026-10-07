@@ -8,7 +8,7 @@ test('ejecuta una inferencia manual completa desde la interfaz', async ({ page }
   await expect(page.getByText('Ejecuta una evaluación para ver el índice, sus reglas y la explicación.')).toBeVisible()
   await expect(page.getByText('Punto geográfico de referencia')).toBeVisible()
   await expect(page.getByText('6 250 hectáreas afectadas')).toBeVisible()
-  await expect(page.getByText('Incendios reportados en 2025')).toBeVisible()
+  await expect(page.getByText('Incendios forestales reportados en 2026')).toBeVisible()
 
   const response = await runManualInference(page, {
     hr_min_pct: 30,

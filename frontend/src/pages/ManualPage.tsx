@@ -128,23 +128,23 @@ export function ManualPage() {
                 </a>
               </div>
               <div className="mt-3 border-t border-line pt-3">
-                <span className="block text-[9px] font-semibold uppercase tracking-[0.08em] text-muted">Incendios reportados en 2025</span>
+                <span className="block text-[9px] font-semibold uppercase tracking-[0.08em] text-muted">Incendios forestales reportados en 2026</span>
                 <div className="mt-1.5 grid gap-1">
                   <a
-                    href="https://www.congreso.gob.pe/Docs/riesgodesastres/files/resumenemergenciasfinal_n%C2%B0175_06_octubre_2025.pdf"
+                    href="https://portal.indeci.gob.pe/emergencias/reporte-complementario-n-11654-3-9-2026-coen-indeci-1531-horas-reporte-n-1-incendio-forestal-en-el-distrito-de-chachapoyas-amazonas/"
                     target="_blank"
                     rel="noreferrer"
                     className="text-[10px] leading-snug text-ink underline decoration-line underline-offset-2 hover:text-ember-600"
                   >
-                    1 oct. · Granada: 2 hectáreas de cobertura natural destruidas
+                    3 sep. · Chachapoyas: daños a la cobertura natural
                   </a>
                   <a
-                    href="https://portal.indeci.gob.pe/emergencias/reporte-preliminar-n-1280-4-9-2025-coen-indeci-1130-horas-incendio-forestal-en-el-distrito-de-levanto-amazonas/"
+                    href="https://portal.indeci.gob.pe/emergencias/reporte-complementario-n-10471-13-8-2026-coen-indeci-2250-horas-reporte-n-o-1-incendio-forestal-en-el-distrito-de-chachapoyas-amazonas/"
                     target="_blank"
                     rel="noreferrer"
                     className="text-[10px] leading-snug text-ink underline decoration-line underline-offset-2 hover:text-ember-600"
                   >
-                    3 sep. · Levanto: incendio con daños a la cobertura natural
+                    13 ago. · Chachapoyas: incendio con daños a cobertura natural
                   </a>
                 </div>
               </div>
