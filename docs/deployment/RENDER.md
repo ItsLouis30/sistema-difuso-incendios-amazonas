@@ -91,7 +91,10 @@ Frontend:
 
 ```bash
 cd frontend
-corepack enable
 pnpm install --frozen-lockfile
 VITE_API_URL=https://sistema-difuso-g8-api.onrender.com pnpm build
 ```
+
+Render ya proporciona pnpm cuando detecta `packageManager` en `package.json`.
+No se ejecuta `corepack enable`, porque el sistema de archivos de las herramientas
+globales de Render es de solo lectura.
