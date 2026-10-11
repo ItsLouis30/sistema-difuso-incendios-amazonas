@@ -69,7 +69,7 @@ export function MethodologyPage() {
               </div>
               <div className="rounded-2xl border border-[#dbe9da] bg-white/80 px-4 py-3">
                 <span className="flex items-center gap-2 text-xs font-semibold text-[#356b3a]"><Target size={15} /> Alcance</span>
-                <p className="mt-1.5 text-xs leading-relaxed text-muted">Es una herramienta de apoyo a decisiones preventivas; no constituye una alerta oficial ni demuestra por sí sola el cumplimiento del ODS.</p>
+                <p className="mt-1.5 text-xs leading-relaxed text-muted">Es una herramienta de apoyo a decisiones preventivas; no constituye una alerta oficial ni predice la ocurrencia de un incendio forestal.</p>
               </div>
             </div>
           </div>
