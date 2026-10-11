@@ -127,7 +127,7 @@ export const TERM_LABELS: Record<string, string> = {
 }
 
 export const PIPELINE = [
-  'Valores crisp',
+  'Entradas numéricas',
   'Fuzzificación',
   'Reglas Mamdani',
   'Agregación',
