@@ -546,4 +546,4 @@ verificación y diagnóstico están en
 
 ## Licencia y autores
 
-Proyecto académico del Grupo 8. La licencia y la lista completa de integrantes se definirán antes de publicar la primera versión estable.
+Proyecto académico del Grupo 8.
